@@ -6,6 +6,7 @@ import Chat from './pages/Chat/Chat'
 import BlogList from './pages/BlogList/BlogList'
 import BlogDetail from './pages/BlogList/BlogDetail'
 import UserLayout from './layouts/UserLayout'
+import Podcast from './pages/Podcast/Podcast'
 
 function App() {
 
@@ -14,9 +15,10 @@ function App() {
       <Route path='/' />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
-      <Route path='/chat' element={<Chat />} />
-      <Route path='blog' element={<UserLayout><BlogList /></UserLayout>} />
-      <Route path='blog/:id' element={<UserLayout><BlogDetail /></UserLayout>} />
+      <Route path='/chat' element={<UserLayout><Chat /></UserLayout>} />
+      <Route path='/blog' element={<UserLayout><BlogList /></UserLayout>} />
+      <Route path='/blog/:id' element={<UserLayout><BlogDetail /></UserLayout>} />
+      <Route path='/podcast' element={<UserLayout><Podcast /></UserLayout>} />
     </Routes>
   )
 }

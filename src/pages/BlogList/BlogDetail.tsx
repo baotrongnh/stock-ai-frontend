@@ -30,7 +30,7 @@ export default function BlogDetail() {
      const [comments, setComments] = useState<Comment[]>([
           {
                id: "1",
-               author: "Vua Đu Đỉnh",
+               author: "Nguyễn Văn A",
                content:
                     "Bài viết rất hay và có tính thực tiễn cao. Cảm ơn tác giả đã chia sẻ những phân tích sâu sắc về thị trường.",
                timestamp: "2 giờ trước",
@@ -38,7 +38,7 @@ export default function BlogDetail() {
           },
           {
                id: "2",
-               author: "Chiến Thần Thổi Nến",
+               author: "Trần Thị B",
                content: "Mình đã áp dụng một số chiến lược được đề cập trong bài và thấy hiệu quả tích cực. Rất hữu ích!",
                timestamp: "5 giờ trước",
                likes: 8,
@@ -106,7 +106,7 @@ Vàng được xem là kênh đầu tư an toàn:
           views: 1250,
           comments: comments.length,
           category: "Investment",
-          image: "https://i.ex-cdn.com/taichinhdoanhnghiep.net.vn/files/content/2024/06/12/co-phieu-chung-khoan-tang-0646.jpg",
+          image: "/placeholder.svg?height=400&width=800",
           tags: ["Đầu tư", "Tài chính", "Chứng khoán", "Thế hệ trẻ"],
      }
 
@@ -126,7 +126,7 @@ Vàng được xem là kênh đầu tư an toàn:
      }
 
      return (
-          <div className="">
+          <div className="flex h-screen bg-gray-50">
                {/* Main Content */}
                <div className="flex-1 flex flex-col">
                     {/* Header */}
