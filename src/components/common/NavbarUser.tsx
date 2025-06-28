@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Activity, ArrowUpRight, BarChart3, MessageSquare, Plus, Sparkles } from 'lucide-react'
+import { Activity, ArrowUpRight, BarChart3, MessageSquare, Plus, Sparkles, Info, CreditCard, Settings } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
@@ -70,6 +70,36 @@ export default function NavbarUser() {
                               >
                                    <Activity className="w-4 h-4 mr-3 group-hover:animate-pulse" />
                                    Podcast
+                                   <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </Button>
+                         </Link>
+                         <Link to='/about'>
+                              <Button
+                                   variant="ghost"
+                                   className="w-full justify-start text-gray-700 hover:bg-red-50 hover:text-red-700 group"
+                              >
+                                   <Info className="w-4 h-4 mr-3 group-hover:animate-bounce" />
+                                   About Us
+                                   <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </Button>
+                         </Link>
+                         <Link to='/pricing'>
+                              <Button
+                                   variant="ghost"
+                                   className="w-full justify-start text-gray-700 hover:bg-red-50 hover:text-red-700 group"
+                              >
+                                   <CreditCard className="w-4 h-4 mr-3 group-hover:animate-pulse" />
+                                   Pricing
+                                   <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </Button>
+                         </Link>
+                         <Link to='/account-settings'>
+                              <Button
+                                   variant="ghost"
+                                   className="w-full justify-start text-gray-700 hover:bg-red-50 hover:text-red-700 group"
+                              >
+                                   <Settings className="w-4 h-4 mr-3 group-hover:animate-spin" />
+                                   Account Settings
                                    <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                               </Button>
                          </Link>
