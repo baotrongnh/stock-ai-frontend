@@ -1,6 +1,6 @@
 import axiosClient from "./AxiosClient";
 
-const getPosts = async (page: string, pageSize: string) => {
+const getPosts = async (page: number, pageSize: number) => {
     const response = await axiosClient.get('/posts', {
         params: {
             page,
@@ -45,7 +45,7 @@ const updatePostById = async (
     if (stockId !== undefined) formData.append('stockId', stockId.toString())
     if (file) formData.append('file', file)
 
-    const response = await axiosClient.put(`/posts/${id}`, formData)
+    const response = await axiosClient.patch(`/posts/${id}`, formData)
 
     return response.data
 }

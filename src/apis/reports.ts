@@ -1,21 +1,21 @@
 import axiosClient from "./AxiosClient"
 
+type ReportPayload = {
+    postId?: number
+    commentId?: number
+    reason?: string
+    status?: string
+}
+
+
 const createReport = async (
-    postId: number,
-    commentId: number,
-    reason: string,
-    status: string
+    data: ReportPayload
 ) => {
-    const response = await axiosClient.post('/reports', {
-        postId,
-        commentId,
-        reason,
-        status
-    })
+    const response = await axiosClient.post('/reports', data)
     return response.data
 }
 
-const getReports = async (page: string, pageSize: string) => {
+const getReports = async (page: number, pageSize: number) => {
     const response = await axiosClient.get('/reports', {
         params: {
             page,
@@ -30,10 +30,11 @@ const getReportById = async (id: number) => {
     return response.data
 }
 
-const updateReportById = async (id: number) => {
-    const response = await axiosClient.put(`/reports/${id}`,{
-        //TO DO 
-    })
+const updateReportById = async (
+    id: number,
+    updateData: ReportPayload
+) => {
+    const response = await axiosClient.patch(`/reports/${id}`, updateData)
     return response.data
 }
 
