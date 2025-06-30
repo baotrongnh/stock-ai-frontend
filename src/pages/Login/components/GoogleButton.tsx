@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useEffect } from 'react';
+import { loginGoogle } from '../../../apis/login';
 
 // Add type declaration for the global callback
 declare global {
@@ -35,11 +36,8 @@ export const GoogleButton = () => {
 
     const sendToken = async (token: string) => {
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_APP_API_URL}/auth/google`,
-                { idToken: token }
-            );
-            console.log('Token sent successfully:', response.data);
+            const response = await loginGoogle(token);
+            console.log('Token sent successfully:', response);
         } catch (error) {
             console.error('Error sending token:', error);
         }

@@ -1,3 +1,4 @@
+import { PostServices } from "@/apis/posts"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -6,7 +7,6 @@ import {
      ArrowLeft,
      Bookmark,
      Calendar,
-     Clock,
      Eye,
      MessageSquare,
      Send,
@@ -14,8 +14,8 @@ import {
      ThumbsUp,
      User
 } from "lucide-react"
-import { useState } from "react"
-import { Link } from "react-router"
+import { useEffect, useState } from "react"
+import { Link, useParams } from "react-router"
 
 interface Comment {
      id: string
@@ -25,7 +25,16 @@ interface Comment {
      likes: number
 }
 
+const DEFAULT_IMAGE = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
+
+function getViewCount(post: any) {
+     return typeof post.viewCount === "number" ? post.viewCount : 0;
+}
+
 export default function BlogDetail() {
+     const { id } = useParams()
+     const [post, setPost] = useState<any>(null)
+     const [loading, setLoading] = useState(true)
      const [newComment, setNewComment] = useState("")
      const [comments, setComments] = useState<Comment[]>([
           {
@@ -45,70 +54,20 @@ export default function BlogDetail() {
           },
      ])
 
-     const blogPost = {
-          id: 2,
-          title: "Đầu Tư Tài Chính Cho Thế Hệ Tương Lai Việt Nam",
-          content: `
-# Đầu Tư Tài Chính Cho Thế Hệ Tương Lai Việt Nam
-
-Trong bối cảnh kinh tế toàn cầu đang có những biến động mạnh mẽ, việc đầu tư tài chính thông minh đã trở thành một yếu tố quan trọng quyết định đến sự thành công của thế hệ trẻ Việt Nam.
-
-## Tại Sao Đầu Tư Tài Chính Quan Trọng?
-
-Thế hệ trẻ Việt Nam hiện tại đang đối mặt với nhiều thách thức về tài chính:
-
-- **Lạm phát gia tăng**: Giá trị đồng tiền giảm dần theo thời gian
-- **Chi phí sinh hoạt tăng cao**: Nhà ở, giáo dục, y tế ngày càng đắt đỏ
-- **Hệ thống lương hưu không đảm bảo**: Cần có kế hoạch tài chính cá nhân
-
-## Các Chiến Lược Đầu Tư Hiệu Quả
-
-### 1. Đầu Tư Chứng Khoán
-
-Thị trường chứng khoán Việt Nam đang có những tín hiệu tích cực:
-
-- VN-Index đã tăng trưởng ổn định trong những năm gần đây
-- Nhiều doanh nghiệp có tiềm năng tăng trưởng mạnh
-- Thanh khoản thị trường được cải thiện đáng kể
-
-### 2. Đầu Tư Bất Động Sản
-
-Bất động sản vẫn là kênh đầu tư được ưa chuộng:
-
-- Giá trị tăng trưởng ổn định theo thời gian
-- Có thể tạo ra dòng tiền thụ động từ cho thuê
-- Đa dạng hóa danh mục đầu tư
-
-### 3. Đầu Tư Vàng và Kim Loại Quý
-
-Vàng được xem là kênh đầu tư an toàn:
-
-- Bảo toàn giá trị trong thời kỳ lạm phát
-- Dễ dàng thanh khoản khi cần thiết
-- Không bị ảnh hưởng bởi biến động chính trị
-
-## Lời Khuyên Cho Nhà Đầu Tư Trẻ
-
-1. **Bắt đầu sớm**: Thời gian là yếu tố quan trọng nhất trong đầu tư
-2. **Đa dạng hóa**: Không đặt tất cả trứng vào một giỏ
-3. **Học hỏi liên tục**: Kiến thức tài chính là chìa khóa thành công
-4. **Kiên nhẫn**: Đầu tư là cuộc chơi dài hạn
-
-## Kết Luận
-
-Đầu tư tài chính không chỉ là cách để tăng tài sản mà còn là cách để đảm bảo tương lai tài chính ổn định. Thế hệ trẻ Việt Nam cần trang bị cho mình những kiến thức và kỹ năng cần thiết để có thể đưa ra những quyết định đầu tư thông minh.
-
-*Lưu ý: Bài viết này chỉ mang tính chất tham khảo. Nhà đầu tư cần cân nhắc kỹ lưỡng và tham khảo ý kiến chuyên gia trước khi đưa ra quyết định đầu tư.*
-    `,
-          author: "Đầu Tư Chứng Khoán",
-          publishDate: "24/06/2025",
-          readTime: "5 min read",
-          views: 1250,
-          comments: comments.length,
-          category: "Investment",
-          image: "/placeholder.svg?height=400&width=800",
-          tags: ["Đầu tư", "Tài chính", "Chứng khoán", "Thế hệ trẻ"],
-     }
+     useEffect(() => {
+          const fetchPost = async () => {
+               setLoading(true)
+               try {
+                    const res = await PostServices.getPostById(Number(id))
+                    console.log(res)
+                    setPost(res.result)
+               } catch {
+                    setPost(null)
+               }
+               setLoading(false)
+          }
+          fetchPost()
+     }, [id])
 
      const handleAddComment = () => {
           if (!newComment.trim()) return
@@ -124,6 +83,9 @@ Vàng được xem là kênh đầu tư an toàn:
           setComments([comment, ...comments])
           setNewComment("")
      }
+
+     if (loading) return <div>Loading...</div>
+     if (!post) return <div>Post not found</div>
 
      return (
           <div className="flex h-screen bg-gray-50">
@@ -157,45 +119,41 @@ Vàng được xem là kênh đầu tư an toàn:
                               {/* Article Header */}
                               <div className="mb-8">
                                    <div className="flex items-center gap-2 mb-4">
-                                        <Badge className="bg-red-100 text-red-700">{blogPost.category}</Badge>
-                                        {blogPost.tags.map((tag) => (
+                                        <Badge className="bg-red-100 text-red-700">{post.category}</Badge>
+                                        {post.tags?.map((tag: string) => (
                                              <Badge key={tag} variant="outline" className="text-xs">
                                                   {tag}
                                              </Badge>
                                         ))}
                                    </div>
 
-                                   <h1 className="text-4xl font-bold text-gray-900 mb-4">{blogPost.title}</h1>
+                                   <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
 
                                    <div className="flex items-center gap-6 text-sm text-gray-600 mb-6">
                                         <div className="flex items-center gap-2">
                                              <User className="w-4 h-4" />
-                                             {blogPost.author}
+                                             {post.author}
                                         </div>
                                         <div className="flex items-center gap-2">
                                              <Calendar className="w-4 h-4" />
-                                             {blogPost.publishDate}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                             <Clock className="w-4 h-4" />
-                                             {blogPost.readTime}
+                                             {new Date(post.createdAt).toLocaleDateString()}
                                         </div>
                                         <div className="flex items-center gap-2">
                                              <Eye className="w-4 h-4" />
-                                             {blogPost.views} views
+                                             {getViewCount(post)} views
                                         </div>
                                    </div>
 
                                    <img
-                                        src={blogPost.image || "/placeholder.svg"}
-                                        alt={blogPost.title}
+                                        src={post.sourceUrl || DEFAULT_IMAGE}
+                                        alt={post.title}
                                         className="w-full h-64 object-cover rounded-lg mb-8"
                                    />
                               </div>
 
                               {/* Article Body */}
                               <div className="prose prose-lg max-w-none mb-12">
-                                   <div className="whitespace-pre-line text-gray-800 leading-relaxed">{blogPost.content}</div>
+                                   <div className="whitespace-pre-line text-gray-800 leading-relaxed">{post.content}</div>
                               </div>
 
                               {/* Article Footer */}
@@ -208,7 +166,7 @@ Vàng được xem là kênh đầu tư an toàn:
                                              </Button>
                                              <div className="flex items-center gap-2 text-sm text-gray-600">
                                                   <MessageSquare className="w-4 h-4" />
-                                                  {blogPost.comments} comments
+                                                  {comments.length} comments
                                              </div>
                                         </div>
                                         <div className="flex items-center gap-2">

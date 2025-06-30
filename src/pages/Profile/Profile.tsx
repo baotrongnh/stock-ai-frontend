@@ -1,32 +1,27 @@
-import { useState, useEffect } from "react"
-import { Link } from "react-router"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-     TrendingUp,
-     User,
-     Settings,
-     MessageSquare,
      BarChart3,
-     PlayCircle,
-     Plus,
-     Sparkles,
-     Edit3,
-     Save,
-     X,
-     Camera,
-     Mail,
-     Phone,
-     MapPin,
-     Calendar,
-     Briefcase,
-     DollarSign,
-     Shield,
      Bell,
+     Briefcase,
+     Calendar,
+     Camera,
+     DollarSign,
+     Edit3,
+     Mail,
+     MapPin,
+     Phone,
+     Save,
+     Settings,
+     Shield,
+     User,
+     X
 } from "lucide-react"
+import { useEffect, useState } from "react"
+import { UserServices } from "@/apis/user"
 
 interface UserProfile {
      firstName: string
@@ -61,21 +56,21 @@ export default function Profile() {
      const [activeTab, setActiveTab] = useState("personal")
 
      const [profile, setProfile] = useState<UserProfile>({
-          firstName: "John",
-          lastName: "Investor",
-          email: "john.investor@email.com",
+          firstName: "Default",
+          lastName: "User",
+          email: "default@email.com",
           phone: "+1 (555) 123-4567",
           location: "New York, NY",
           dateOfBirth: "1990-05-15",
-          occupation: "Financial Analyst",
-          investmentExperience: "5+ years",
-          riskTolerance: "Moderate",
-          investmentGoals: "Long-term wealth building and retirement planning",
-          bio: "Passionate about financial markets and long-term investing. Focused on building a diversified portfolio with a mix of growth and value stocks.",
-          avatar: "/placeholder.svg?height=120&width=120",
-          joinDate: "January 2023",
-          totalInvestments: "47",
-          portfolioValue: "$125,430",
+          occupation: "Financial Analyst", // default text
+          investmentExperience: "5+ years", // default text
+          riskTolerance: "Moderate", // default text
+          investmentGoals: "Long-term wealth building and retirement planning", // default text
+          bio: "Passionate about financial markets and long-term investing. Focused on building a diversified portfolio with a mix of growth and value stocks.", // default text
+          avatar: "https://tse4.mm.bing.net/th/id/OIP.0YMbH3u3Nq7TumFaeRiU3gHaHk?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+          joinDate: "January 2023", // default text
+          totalInvestments: "47", // default text
+          portfolioValue: "$125,430", // default text
           notifications: {
                email: true,
                push: true,
@@ -121,11 +116,35 @@ export default function Profile() {
           }))
      }
 
+     useEffect(() => {
+          console.log("Profile page loaded")
+     }, [])
+
      const tabs = [
           { id: "personal", label: "Personal Info", icon: <User className="w-4 h-4" /> },
           { id: "investment", label: "Investment Profile", icon: <DollarSign className="w-4 h-4" /> },
           { id: "settings", label: "Settings", icon: <Settings className="w-4 h-4" /> },
      ]
+
+     useEffect(() => {
+          // Get userId from localStorage
+          const userId = localStorage.getItem("userId");
+          if (!userId) return;
+
+          UserServices.getUserById(Number(userId)).then((res) => {
+               console.log('User Data: ', res)
+               if (res?.data) {
+                    setProfile((prev) => ({
+                         ...prev,
+                         firstName: res.data.fullName?.split(" ")[0] || prev.firstName,
+                         lastName: res.data.fullName?.split(" ").slice(1).join(" ") || prev.lastName,
+                         email: res.data.email || prev.email,
+                         avatar: res.data.avatarUrl || prev.avatar,
+                         
+                    }))
+               }
+          })
+     }, [])
 
      return (
           <div className="flex h-screen bg-gradient-to-br from-gray-50 via-red-50/30 to-orange-50/20">
@@ -185,7 +204,7 @@ export default function Profile() {
                                         <div className="flex items-center space-x-6">
                                              <div className="relative">
                                                   <img
-                                                       src={profile.avatar || "/placeholder.svg"}
+                                                       src={profile.avatar === null ? "https://tse4.mm.bing.net/th/id/OIP.0YMbH3u3Nq7TumFaeRiU3gHaHk?r=0&rs=1&pid=ImgDetMain&o=7&rm=3" : profile.avatar}
                                                        alt="Profile"
                                                        className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
                                                   />
@@ -226,8 +245,8 @@ export default function Profile() {
                                              key={tab.id}
                                              onClick={() => setActiveTab(tab.id)}
                                              className={`flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-lg transition-all duration-200 ${activeTab === tab.id
-                                                       ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg"
-                                                       : "text-gray-600 hover:bg-red-50 hover:text-red-700"
+                                                  ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg"
+                                                  : "text-gray-600 hover:bg-red-50 hover:text-red-700"
                                                   }`}
                                         >
                                              {tab.icon}
