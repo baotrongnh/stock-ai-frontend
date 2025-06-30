@@ -75,7 +75,7 @@ export const GoogleButton = () => {
                 data-client_id="383857528826-l5t7hq4nesilhjfoat6t33v8ba74k54h.apps.googleusercontent.com"
                 data-context="signin"
                 data-ux_mode="popup"
-                data-login_uri="http://localhost:3000/auth/google"
+                data-login_uri="http://localhost:5173/auth/google"
                 data-auto_prompt="false"
                 data-callback="handleCredentialResponse"
             ></div>

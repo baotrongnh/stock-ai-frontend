@@ -1,8 +1,25 @@
 import logo from "../../assets/logo/logo.svg"
-import { GoogleButton } from "./components/GoogleButton"
-import { FacebookButton } from "./components/FacebookButton"
+// import { GoogleButton } from "./components/GoogleButton"
+// import { FacebookButton } from "./components/FacebookButton"
+import { useState } from "react";
+import { login } from "../../apis/auth";
 
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+         try {
+       const response = await login(email, password);
+       console.log(response);
+
+      alert('Login successful!');
+    } catch (error) {
+      console.error('Error logging in:', error);
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="flex w-[900px] h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden">
@@ -16,19 +33,25 @@ export default function Login() {
         <div className="w-1/2 flex flex-col justify-center px-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">Sign In</h2>
           <p className="text-gray-500 text-center mb-6">Enter your credentials to access your account</p>
-          <form>
+          <form onSubmit={handleLogin}>
             <div className="mb-4">
               <input
-                type="text"
-                placeholder="Username"
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#66CCFF]"
+                required
               />
             </div>
             <div className="mb-2 relative">
               <input
                 type="password"
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#66CCFF]"
+                required
               />
               
               <span className="absolute right-4 top-3 text-gray-400 cursor-pointer">
@@ -54,8 +77,9 @@ export default function Login() {
             <div className="flex-grow h-px bg-gray-200"></div>
           </div>
           <div className="flex justify-center gap-4 mb-4">
-            <GoogleButton />
-            <FacebookButton />
+            {/* Tạm thời disable để tránh lỗi OAuth */}
+            {/* <GoogleButton />
+            <FacebookButton /> */}
           </div>
           <div className="text-center text-gray-500">
             Don't have an account?{" "}
