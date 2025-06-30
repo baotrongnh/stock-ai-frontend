@@ -7,6 +7,7 @@ import BlogList from './pages/BlogList/BlogList'
 import BlogDetail from './pages/BlogList/BlogDetail'
 import UserLayout from './layouts/UserLayout'
 import Podcast from './pages/Podcast/Podcast'
+import Profile from './pages/Profile/Profile'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
       <Route path='/blog' element={<UserLayout><BlogList /></UserLayout>} />
       <Route path='/blog/:id' element={<UserLayout><BlogDetail /></UserLayout>} />
       <Route path='/podcast' element={<UserLayout><Podcast /></UserLayout>} />
+      <Route path='/profile' element={<UserLayout><Profile /></UserLayout>} />
     </Routes>
   )
 }

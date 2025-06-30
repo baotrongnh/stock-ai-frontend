@@ -1,10 +1,18 @@
 import logo from "../../assets/logo/logo.svg"
 import { GoogleButton } from "./components/GoogleButton"
 import { FacebookButton } from "./components/FacebookButton"
+import { login } from '../../apis/login'
 
 export default function Login() {
+
+  const handleLogin = async () => {
+    const res = await login('string', 'string')
+    console.log(res)
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <button onClick={handleLogin}>Click</button>
       <div className="flex w-[900px] h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Left side */}
         <div className="w-1/2 bg-[#66CCFF] flex flex-col items-center justify-center">
@@ -30,11 +38,11 @@ export default function Login() {
                 placeholder="Password"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#66CCFF]"
               />
-              
+
               <span className="absolute right-4 top-3 text-gray-400 cursor-pointer">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                  <path stroke="#94a3b8" strokeWidth="2" d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"/>
-                  <circle cx="12" cy="12" r="3" stroke="#94a3b8" strokeWidth="2"/>
+                  <path stroke="#94a3b8" strokeWidth="2" d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" />
+                  <circle cx="12" cy="12" r="3" stroke="#94a3b8" strokeWidth="2" />
                 </svg>
               </span>
             </div>
@@ -44,6 +52,7 @@ export default function Login() {
             <button
               type="submit"
               className="w-full bg-[#66CCFF] text-white py-3 rounded-lg font-semibold hover:bg-[#0099FF] transition mb-4"
+              onClick={handleLogin}
             >
               Sign In <span className="ml-2">&rarr;</span>
             </button>
