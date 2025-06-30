@@ -28,7 +28,6 @@ const createPost = async (
 
 const getPostById = async (id: number) => {
     const response = await axiosClient.get(`/posts/${id}`)
-
     return response.data
 }
 
