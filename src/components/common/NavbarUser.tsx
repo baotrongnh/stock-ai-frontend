@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Activity, ArrowUpRight, BarChart3, MessageSquare, Plus, Sparkles, Info, CreditCard, Settings } from 'lucide-react'
+import { Activity, ArrowUpRight, BarChart3, MessageSquare, PlayCircle, Plus, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 
@@ -53,6 +53,12 @@ export default function NavbarUser() {
                                    AI Chat
                               </Button>
                          </Link>
+
+                         <Button variant="default" className="justify-start w-full justify-start bg-red-50 text-red-700 hover:bg-red-100">
+                              <PlayCircle className="w-4 h-4 mr-3" />
+                              Videos & Podcasts
+                         </Button>
+
                          <Link to='/blog'>
                               <Button
                                    variant="ghost"
