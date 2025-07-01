@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router"
+import { PostActions } from "./components/PostActions"
 
 interface Comment {
      id: string
@@ -55,24 +56,40 @@ export default function BlogDetail() {
      ])
      const [isImageOpen, setIsImageOpen] = useState(false)
      const [normalizedContent, setNormalizedContent] = useState("")
+     const userId = Number(localStorage.getItem('userId'))
 
+     const fetchPost = async () => {
+          setLoading(true)
+          try {
+               const res = await PostServices.getPostById(Number(id))
+               console.log(res)
+               if (!res.error) {
+                    if (res.result) {
+                         setPost(res.result)
+                    } else {
+                         setPost(res.data)
+                    }
+               }
+
+          } catch {
+               setPost(null)
+          } finally {
+               setLoading(false)
+          }
+     }
 
      useEffect(() => {
-          const fetchPost = async () => {
-               setLoading(true)
-               try {
-                    const res = await PostServices.getPostById(Number(id))
-                    console.log(res)
-                    // console.log(res.result)
-                    setPost(res.data)
-               } catch {
-                    setPost(null)
-               } finally {
-                    setLoading(false)
-               }
-          }
           fetchPost()
+
      }, [id])
+
+     // useEffect(() => {
+     //      if (post) {
+     //           console.log(post.expertId)
+     //           console.log(userId)
+     //      }
+
+     // }, [post])
 
 
 
@@ -115,16 +132,6 @@ export default function BlogDetail() {
                                         Back to Blog
                                    </Button>
                               </Link>
-                              <div className="flex items-center gap-2">
-                                   <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50">
-                                        <Share2 className="w-4 h-4 mr-2" />
-                                        Share
-                                   </Button>
-                                   <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50">
-                                        <Bookmark className="w-4 h-4 mr-2" />
-                                        Save
-                                   </Button>
-                              </div>
                          </div>
                     </div>
 
@@ -203,6 +210,13 @@ export default function BlogDetail() {
                                                   <Bookmark className="w-4 h-4 mr-2" />
                                                   Save
                                              </Button>
+                                             {
+                                                  post.expertId === userId
+                                                       ?
+                                                       <PostActions post={post} refetchPost={fetchPost} />
+                                                       :
+                                                       <></>
+                                             }
                                         </div>
                                    </div>
                               </div>
