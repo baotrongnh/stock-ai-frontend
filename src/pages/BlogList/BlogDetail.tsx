@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router"
+import { PostActions } from "./components/PostActions"
 
 interface Comment {
      id: string
@@ -53,21 +54,44 @@ export default function BlogDetail() {
                likes: 8,
           },
      ])
+     const [isImageOpen, setIsImageOpen] = useState(false)
+     const [normalizedContent, setNormalizedContent] = useState("")
+     const userId = Number(localStorage.getItem('userId'))
 
-     useEffect(() => {
-          const fetchPost = async () => {
-               setLoading(true)
-               try {
-                    const res = await PostServices.getPostById(Number(id))
-                    console.log(res)
-                    setPost(res.result)
-               } catch {
-                    setPost(null)
+     const fetchPost = async () => {
+          setLoading(true)
+          try {
+               const res = await PostServices.getPostById(Number(id))
+               console.log(res)
+               if (!res.error) {
+                    if (res.result) {
+                         setPost(res.result)
+                    } else {
+                         setPost(res.data)
+                    }
                }
+
+          } catch {
+               setPost(null)
+          } finally {
                setLoading(false)
           }
+     }
+
+     useEffect(() => {
           fetchPost()
+
      }, [id])
+
+     // useEffect(() => {
+     //      if (post) {
+     //           console.log(post.expertId)
+     //           console.log(userId)
+     //      }
+
+     // }, [post])
+
+
 
      const handleAddComment = () => {
           if (!newComment.trim()) return
@@ -84,8 +108,16 @@ export default function BlogDetail() {
           setNewComment("")
      }
 
+     useEffect(() => {
+          if (post?.content) {
+               const normalized = post.content.replace(/\\n/g, '\n')
+               setNormalizedContent(normalized)
+          }
+     }, [post])
+
+
      if (loading) return <div>Loading...</div>
-     if (!post) return <div>Post not found</div>
+     if (!loading && !post) return <div>Post not found</div>
 
      return (
           <div className="flex h-screen bg-gray-50">
@@ -100,16 +132,6 @@ export default function BlogDetail() {
                                         Back to Blog
                                    </Button>
                               </Link>
-                              <div className="flex items-center gap-2">
-                                   <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50">
-                                        <Share2 className="w-4 h-4 mr-2" />
-                                        Share
-                                   </Button>
-                                   <Button variant="outline" size="sm" className="border-red-200 text-red-600 hover:bg-red-50">
-                                        <Bookmark className="w-4 h-4 mr-2" />
-                                        Save
-                                   </Button>
-                              </div>
                          </div>
                     </div>
 
@@ -147,14 +169,24 @@ export default function BlogDetail() {
                                    <img
                                         src={post.sourceUrl || DEFAULT_IMAGE}
                                         alt={post.title}
-                                        className="w-full h-64 object-cover rounded-lg mb-8"
+                                        onClick={() => setIsImageOpen(true)}
+                                        className="w-full h-64 object-cover rounded-lg mb-8 cursor-pointer transition-transform hover:scale-105"
                                    />
+
                               </div>
 
                               {/* Article Body */}
+
                               <div className="prose prose-lg max-w-none mb-12">
-                                   <div className="whitespace-pre-line text-gray-800 leading-relaxed">{post.content}</div>
+                                   <div className="prose prose-lg max-w-none mb-12 text-gray-800 leading-relaxed">
+                                        {normalizedContent.split('\n').map((line, index) => (
+                                             <p key={index}>{line}</p>
+                                        ))}
+                                   </div>
+
                               </div>
+
+
 
                               {/* Article Footer */}
                               <div className="border-t border-gray-200 pt-6 mb-8">
@@ -178,6 +210,13 @@ export default function BlogDetail() {
                                                   <Bookmark className="w-4 h-4 mr-2" />
                                                   Save
                                              </Button>
+                                             {
+                                                  post.expertId === userId
+                                                       ?
+                                                       <PostActions post={post} refetchPost={fetchPost} />
+                                                       :
+                                                       <></>
+                                             }
                                         </div>
                                    </div>
                               </div>
@@ -246,7 +285,22 @@ export default function BlogDetail() {
                               </div>
                          </article>
                     </div>
-               </div>
-          </div>
+               </div >
+               {isImageOpen && (
+                    <div
+                         className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
+                         onClick={() => setIsImageOpen(false)}
+                    >
+                         <img
+                              src={post.sourceUrl || DEFAULT_IMAGE}
+                              alt="Full Size"
+                              className="max-h-[90vh] max-w-[90vw] rounded shadow-lg"
+                         />
+                    </div>
+               )
+               }
+
+
+          </div >
      )
 }
