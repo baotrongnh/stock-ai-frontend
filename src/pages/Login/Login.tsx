@@ -20,7 +20,7 @@ export default function Login() {
     console.log(res); // Debug: see what is returned
     if (res?.data?.access_token && res?.data.user?.userId) {
       localStorage.setItem("userId", res.data.user.userId);
-      localStorage.setItem("access_token", res.data.access_token);
+      localStorage.setItem("accessToken", res.data.access_token);
       const userProfile = await UserServices.getUserById(res.data.userId);
       navigate("/profile", { state: { user: userProfile.data } });
     } else {
@@ -85,10 +85,10 @@ export default function Login() {
             <span className="mx-2 text-gray-400">or continue with</span>
             <div className="flex-grow h-px bg-gray-200"></div>
           </div>
-          <div className="flex justify-center gap-4 mb-4">
+          {/* <div className="flex justify-center gap-4 mb-4">
             <GoogleButton />
             <FacebookButton />
-          </div>
+          </div> */}
           <div className="text-center text-gray-500">
             Don't have an account?{" "}
             <a href="/register" className="text-[#66CCFF] font-semibold hover:underline">Sign up</a>
