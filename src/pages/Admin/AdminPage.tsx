@@ -65,6 +65,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { useTheme } from "next-themes"
+import { getAllUsers } from "@/apis/admin"
 
 const navigation = [
     {
@@ -92,19 +93,6 @@ const navigation = [
         icon: Settings,
         url: "#settings",
     },
-]
-
-const mockUsers = [
-    { id: 1, name: "John Doe", email: "john@example.com", role: "admin", status: "active", lastActive: "2 hours ago" },
-    {
-        id: 2,
-        name: "Jane Smith",
-        email: "jane@example.com",
-        role: "moderator",
-        status: "active",
-        lastActive: "1 day ago",
-    },
-    { id: 3, name: "Bob Johnson", email: "bob@example.com", role: "user", status: "inactive", lastActive: "1 week ago" },
 ]
 
 const mockReports = [
@@ -176,6 +164,25 @@ export function AdminDashboard() {
     const [selectedReport, setSelectedReport] = React.useState<any>(null)
     const [selectedStock, setSelectedStock] = React.useState<any>(null)
     const { theme, setTheme } = useTheme()
+
+    type User = {
+        userId: string
+        fullName: string
+        email: string
+        role: string
+        // add other fields as needed
+    }
+    const [listUsers, setListUsers] = React.useState<User[] | null>(null)
+
+    const fetchDataUsers = async () => {
+        const data = await getAllUsers()
+        setListUsers(data.data.data.data)
+    }
+
+    React.useEffect(() => {
+        fetchDataUsers()
+    }, [])
+
 
     const renderDashboard = () => (
         <div className="space-y-6">
@@ -320,21 +327,21 @@ export function AdminDashboard() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {mockUsers.map((user) => (
-                                <TableRow key={user.id}>
-                                    <TableCell className="font-medium">{user.name}</TableCell>
+                            {listUsers?.map((user) => (
+                                <TableRow key={user.userId}>
+                                    <TableCell className="font-medium">{user.fullName}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>
                                         <Badge
                                             variant={user.role === "admin" ? "default" : user.role === "moderator" ? "secondary" : "outline"}
                                         >
-                                            {user.role}
+                                            User
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant={user.status === "active" ? "default" : "secondary"}>{user.status}</Badge>
+                                        <Badge variant='default'>active</Badge>
                                     </TableCell>
-                                    <TableCell>{user.lastActive}</TableCell>
+                                    <TableCell>1 hour</TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>

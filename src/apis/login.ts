@@ -1,4 +1,4 @@
-import axiosClient from "./AxiosClient"
+import axiosClient from "./axiosClient"
 
 /* Example for call api login */
 const login = async (email: string, password: string) => {
