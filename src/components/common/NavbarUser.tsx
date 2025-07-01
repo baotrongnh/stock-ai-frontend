@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router'
+import { toast } from 'react-hot-toast' // 👈 ADD THIS
 
 export default function NavbarUser() {
      const [currentTime, setCurrentTime] = useState(new Date())
@@ -23,8 +24,14 @@ export default function NavbarUser() {
           return () => clearInterval(timer)
      }, [])
 
-     // Helper to check if route is active
      const isActive = (path: string) => location.pathname === path
+
+     const handleLogout = () => {
+          localStorage.removeItem('userId')
+          localStorage.removeItem('accessToken')
+          toast.success('Logged out successfully') 
+          navigate('/')
+     }
 
      return (
           <div className="fixed top-0 left-0 w-80 h-full bg-white/80 backdrop-blur-xl border-r border-red-100/50 flex flex-col shadow-xl">
@@ -93,7 +100,8 @@ export default function NavbarUser() {
                                    <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                               </Button>
                          </Link>
-                         {userId ?
+
+                         {userId && (
                               <Link to="/profile">
                                    <Button
                                         variant="ghost"
@@ -107,9 +115,7 @@ export default function NavbarUser() {
                                         <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
                                    </Button>
                               </Link>
-                              :
-                              <></>
-                         }
+                         )}
                     </div>
                </div>
 
@@ -117,10 +123,7 @@ export default function NavbarUser() {
                <div className="mt-auto p-4">
                     {userId ? (
                          <Button
-                              onClick={() => {
-                                   localStorage.removeItem('userId')
-                                   navigate('/')
-                              }}
+                              onClick={handleLogout}
                               className="w-full bg-red-500 text-white font-semibold hover:bg-red-400 transition cursor-pointer"
                          >
                               Logout
