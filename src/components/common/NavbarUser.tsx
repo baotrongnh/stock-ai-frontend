@@ -66,18 +66,6 @@ export default function NavbarUser() {
                               </Button>
                          </Link>
 
-
-                         {/* <Button
-                              variant="default"
-                              className={`w-full justify-start ${isActive('/videos')
-                                        ? 'bg-red-100 text-red-700'
-                                        : 'bg-red-50 text-red-700 hover:bg-red-100'
-                                   }`}
-                         >
-                              <PlayCircle className="w-4 h-4 mr-3" />
-                              Videos & Podcasts
-                         </Button> */}
-
                          <Link to="/blog">
                               <Button
                                    variant="ghost"
@@ -133,13 +121,13 @@ export default function NavbarUser() {
                                    localStorage.removeItem('userId')
                                    navigate('/')
                               }}
-                              className="w-full bg-red-500 text-white font-semibold hover:bg-red-100 transition cursor-pointer"
+                              className="w-full bg-red-500 text-white font-semibold hover:bg-red-400 transition cursor-pointer"
                          >
                               Logout
                          </Button>
                     ) : (
                          <Link to="/login">
-                              <Button className="w-full bg-red-500 text-white font-semibold hover:bg-red-100 transition cursor-pointer">
+                              <Button className="w-full bg-red-500 text-white font-semibold hover:bg-red-400 transition cursor-pointer">
                                    Sign In
                               </Button>
                          </Link>

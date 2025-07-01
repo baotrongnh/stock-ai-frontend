@@ -29,7 +29,7 @@ export default function Login() {
     // console.log(res.user.userId)
     if (res?.access_token && res?.user?.userId) {
       localStorage.setItem("userId", res.user.userId);
-      localStorage.setItem("access_token", res.access_token);
+      localStorage.setItem("accessToken", res.access_token);
       const userProfile = await UserServices.getUserById(res.userId);
 
       // console.log(userProfile)
