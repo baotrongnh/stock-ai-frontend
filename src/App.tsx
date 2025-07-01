@@ -10,21 +10,25 @@ import Podcast from './pages/Podcast/Podcast'
 import Profile from './pages/Profile/Profile'
 import AdminLayout from './layouts/AdminLayout'
 import { AdminDashboard } from './pages/Admin/AdminPage'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
 
   return (
-    <Routes>
-      <Route path='/' element={<UserLayout><BlogList /></UserLayout>}  />
-      <Route path='/login' element={<Login />} />
-      <Route path='/register' element={<Register />} />
-      <Route path='/chat' element={<UserLayout><Chat /></UserLayout>} />
-      <Route path='/blog' element={<UserLayout><BlogList /></UserLayout>} />
-      <Route path='/blog/:id' element={<UserLayout><BlogDetail /></UserLayout>} />
-      <Route path='/podcast' element={<UserLayout><Podcast /></UserLayout>} />
-      <Route path='/profile' element={<UserLayout><Profile /></UserLayout>} />
-      <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-    </Routes>
+    <>
+      <Toaster position="top-right" />
+      <Routes>
+        <Route path='/' element={<UserLayout><BlogList /></UserLayout>} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/chat' element={<UserLayout><Chat /></UserLayout>} />
+        <Route path='/blog' element={<UserLayout><BlogList /></UserLayout>} />
+        <Route path='/blog/:id' element={<UserLayout><BlogDetail /></UserLayout>} />
+        <Route path='/podcast' element={<UserLayout><Podcast /></UserLayout>} />
+        <Route path='/profile' element={<UserLayout><Profile /></UserLayout>} />
+        <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+      </Routes>
+    </>
   )
 }
 

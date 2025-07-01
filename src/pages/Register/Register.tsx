@@ -39,13 +39,13 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <Toaster position="top-right" />
       <div className="flex w-[900px] h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Left side */}
         <div className="w-1/2 bg-[#66CCFF] flex flex-col items-center justify-center">
-          <div className="flex flex-col items-center ">
-            <img src={logo} alt="logo" className="w-100 h-100 ml-30 " />
-          </div>
+          <img src={logo} alt="logo" className="w-100 h-100 ml-30" />
         </div>
+
         {/* Right side */}
         <div className="w-1/2 flex flex-col justify-center px-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">
