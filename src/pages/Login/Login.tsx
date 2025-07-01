@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router";
 import logo from "../../assets/logo/logo.svg"
 import { GoogleButton } from "./components/GoogleButton"
@@ -13,15 +13,26 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userId')
+
+    if (userId) navigate('/profile')
+  }, [navigate])
+
   const handleLogin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setError(null);
     const res = await login(email, password);
-    console.log(res); // Debug: see what is returned
-    if (res?.data?.access_token && res?.data.user?.userId) {
-      localStorage.setItem("userId", res.data.user.userId);
-      localStorage.setItem("access_token", res.data.access_token);
-      const userProfile = await UserServices.getUserById(res.data.userId);
+    // console.log(res);
+    // console.log(res?.access_token)
+    // console.log(res.user.userId)
+    if (res?.access_token && res?.user?.userId) {
+      localStorage.setItem("userId", res.user.userId);
+      localStorage.setItem("access_token", res.access_token);
+      const userProfile = await UserServices.getUserById(res.userId);
+
+      // console.log(userProfile)
       navigate("/profile", { state: { user: userProfile.data } });
     } else {
       setError("Invalid email or password");
