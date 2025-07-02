@@ -11,6 +11,7 @@ import Profile from './pages/Profile/Profile'
 import AdminLayout from './layouts/AdminLayout'
 import { AdminDashboard } from './pages/Admin/AdminPage'
 import { Toaster } from 'react-hot-toast'
+import TempLogData from './pages/TempLogData'
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
         <Route path='/podcast' element={<UserLayout><Podcast /></UserLayout>} />
         <Route path='/profile' element={<UserLayout><Profile /></UserLayout>} />
         <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+        <Route path='/data' element={<UserLayout><TempLogData /></UserLayout>} />
       </Routes>
     </>
   )

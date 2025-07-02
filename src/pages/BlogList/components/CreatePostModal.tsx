@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { PostServices } from '@/apis/posts'
 import { useNavigate } from 'react-router'
+import toast from 'react-hot-toast'
 
 interface CreatePostModalProps {
     onPostCreated?: () => void
@@ -45,11 +46,13 @@ export function CreatePostModal({ onPostCreated }: CreatePostModalProps) {
                     onPostCreated()
                 }
                 setIsOpen(false)
-                navigate('/')
+                toast.success('Create Post successfuly!')
+                setTimeout(() => { navigate('/') }, 1000)
+
             }
 
         } catch (error) {
-            // Silently fail
+            toast.error(`Error: ${error}`)
         } finally {
             setIsSubmitting(false)
         }
