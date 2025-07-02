@@ -1,7 +1,6 @@
-import register from "../../apis/register";
+import { register } from "../../apis/auth";
 import logo from "../../assets/logo/logo.svg";
 import { useState } from "react";
-import { Toaster } from "react-hot-toast";
 
 export default function Register() {
   const [email, setEmail] = useState("");
