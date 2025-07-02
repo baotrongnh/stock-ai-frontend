@@ -14,6 +14,7 @@ export default function BlogPage() {
      const [page, setPage] = useState(1)
      const [totalPages, setTotalPages] = useState(1)
      const pageSize = 9
+     const userId = localStorage.getItem('userId')
 
      const fetchPosts = async () => {
           setLoading(true)
@@ -25,7 +26,7 @@ export default function BlogPage() {
                     (a: any, b: any) =>
                          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
                )
-               
+
                setPosts(sortedPosts)
                // console.log(sortedPosts)
                setTotalPages(res.data?.pagination?.totalPages || 1)
@@ -49,7 +50,11 @@ export default function BlogPage() {
                          <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent">
                               📚 Market Insights Blog
                          </h1>
-                         <CreatePostModal onPostCreated={fetchPosts}/>
+                         {userId ?
+                              <CreatePostModal onPostCreated={fetchPosts} />
+                              :
+                              <></>
+                         }
                     </div>
 
                     {/* Post Grid */}

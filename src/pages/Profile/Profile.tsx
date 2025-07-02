@@ -1,3 +1,4 @@
+import { UserServices } from "@/apis/user"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -21,7 +22,7 @@ import {
      X
 } from "lucide-react"
 import { useEffect, useState } from "react"
-import { UserServices } from "@/apis/user"
+import toast from 'react-hot-toast'
 
 interface UserProfile {
      firstName: string
@@ -51,7 +52,6 @@ interface UserProfile {
 }
 
 export default function Profile() {
-     const [currentTime, setCurrentTime] = useState(new Date())
      const [isEditing, setIsEditing] = useState(false)
      const [activeTab, setActiveTab] = useState("personal")
 
@@ -84,14 +84,91 @@ export default function Profile() {
 
      const [editedProfile, setEditedProfile] = useState<UserProfile>(profile)
 
+     // Add extra state for backend-only fields
+     const [userBackendFields, setUserBackendFields] = useState({
+          provider: '',
+          socialId: '',
+          status: '',
+          passwordHash: '',
+     });
+
      useEffect(() => {
-          const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-          return () => clearInterval(timer)
+          console.log("Profile page loaded")
      }, [])
 
-     const handleSave = () => {
-          setProfile(editedProfile)
-          setIsEditing(false)
+     useEffect(() => {
+          setEditedProfile(profile);
+     }, [profile]);
+
+     const tabs = [
+          { id: "personal", label: "Personal Info", icon: <User className="w-4 h-4" /> },
+          { id: "investment", label: "Investment Profile", icon: <DollarSign className="w-4 h-4" /> },
+          { id: "settings", label: "Settings", icon: <Settings className="w-4 h-4" /> },
+     ]
+
+     useEffect(() => {
+          // Get userId from localStorage
+          const userId = localStorage.getItem("userId");
+          if (!userId) return;
+
+          UserServices.getUserById(Number(userId)).then((res) => {
+               console.log('User Data: ', res)
+               if (res?.data) {
+                    setProfile((prev) => ({
+                         ...prev,
+                         firstName: res.data.fullName?.split(" ")[0] || prev.firstName,
+                         lastName: res.data.fullName?.split(" ").slice(1).join(" ") || prev.lastName,
+                         email: res.data.email || prev.email,
+                         avatar: res.data.avatarUrl || prev.avatar,
+                    }))
+                    setUserBackendFields({
+                         provider: res.data.provider || '',
+                         socialId: res.data.socialId || '',
+                         status: res.data.status || '',
+                         passwordHash: res.data.passwordHash || '',
+                    })
+               }
+          })
+     }, [])
+
+     const handleSave = async () => {
+          const userId = localStorage.getItem("userId");
+          if (!userId) return;
+          // Compose fullName
+          const fullName = `${editedProfile.firstName} ${editedProfile.lastName}`.trim();
+          try {
+               const res = await UserServices.updateUser(
+                    Number(userId),
+                    {
+                         email: editedProfile.email,
+                         passwordHash: userBackendFields.passwordHash || '',
+                         fullName,
+                         provider: userBackendFields.provider,
+                         socialId: userBackendFields.socialId,
+                         status: userBackendFields.status,
+                    }
+               );
+               console.log(Number(userId))
+               console.log(res)
+               if (res.error === true) {
+                    toast.error(res.message || 'Failed to update profile.');
+               } else {
+                    // Optionally update profile state with backend response if available
+                    if (res.data) {
+                         setProfile((prev) => ({
+                              ...prev,
+                              firstName: res.data.fullName?.split(" ")[0] || prev.firstName,
+                              lastName: res.data.fullName?.split(" ").slice(1).join(" ") || prev.lastName,
+                              email: res.data.email || prev.email,
+                              avatar: res.data.avatarUrl || prev.avatar,
+                         }));
+                    }
+                    setIsEditing(false);
+                    toast.success('Profile updated successfully!');
+               }
+          } catch {
+               toast.error('Failed to update profile.');
+          }
      }
 
      const handleCancel = () => {
@@ -115,36 +192,6 @@ export default function Profile() {
                },
           }))
      }
-
-     useEffect(() => {
-          console.log("Profile page loaded")
-     }, [])
-
-     const tabs = [
-          { id: "personal", label: "Personal Info", icon: <User className="w-4 h-4" /> },
-          { id: "investment", label: "Investment Profile", icon: <DollarSign className="w-4 h-4" /> },
-          { id: "settings", label: "Settings", icon: <Settings className="w-4 h-4" /> },
-     ]
-
-     useEffect(() => {
-          // Get userId from localStorage
-          const userId = localStorage.getItem("userId");
-          if (!userId) return;
-
-          UserServices.getUserById(Number(userId)).then((res) => {
-               console.log('User Data: ', res)
-               if (res?.data) {
-                    setProfile((prev) => ({
-                         ...prev,
-                         firstName: res.data.fullName?.split(" ")[0] || prev.firstName,
-                         lastName: res.data.fullName?.split(" ").slice(1).join(" ") || prev.lastName,
-                         email: res.data.email || prev.email,
-                         avatar: res.data.avatarUrl || prev.avatar,
-                         
-                    }))
-               }
-          })
-     }, [])
 
      return (
           <div className="flex h-screen bg-gradient-to-br from-gray-50 via-red-50/30 to-orange-50/20">
