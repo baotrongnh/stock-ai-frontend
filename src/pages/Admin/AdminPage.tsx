@@ -163,7 +163,8 @@ export function AdminDashboard() {
     const [selectedUser, setSelectedUser] = React.useState<any>(null)
     const [selectedReport, setSelectedReport] = React.useState<any>(null)
     const [selectedStock, setSelectedStock] = React.useState<any>(null)
-    const { theme, setTheme } = useTheme()
+    // const { theme, setTheme } = useTheme()
+
 
     type User = {
         userId: string
