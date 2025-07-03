@@ -291,7 +291,7 @@ export default function StockAnalysisChat() {
                     {/* Format answer using formatText utility */}
                     {formatText(message.content)
                       .split("\n\n")
-                      .map((para, idx) => (
+                      .map((para: string, idx: number) => (
                         <p key={idx} className="mb-2">
                           {para}
                         </p>
