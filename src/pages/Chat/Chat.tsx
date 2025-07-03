@@ -16,6 +16,7 @@ import {
   User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { formatText } from "../../utils/formatText.js";
 
 interface Message {
   id: string;
@@ -287,17 +288,14 @@ export default function StockAnalysisChat() {
                         : "bg-white/80 backdrop-blur-sm border border-red-100/50 text-gray-900"
                     }`}
                   >
-                    {/* Format answer by splitting by \n\n and rendering each paragraph as a <p> */}
-                    {message.content.split(/\n{2,}/).map((para, idx) => (
-                      <p key={idx} className="mb-2">
-                        {para.split("\n").map((line, i) => (
-                          <span key={i}>
-                            {line}
-                            <br />
-                          </span>
-                        ))}
-                      </p>
-                    ))}
+                    {/* Format answer using formatText utility */}
+                    {formatText(message.content)
+                      .split("\n\n")
+                      .map((para, idx) => (
+                        <p key={idx} className="mb-2">
+                          {para}
+                        </p>
+                      ))}
 
                     {message.stockData && (
                       <Card className="mt-4 bg-gray-50 border-0">
