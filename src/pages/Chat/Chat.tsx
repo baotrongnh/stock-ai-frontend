@@ -287,9 +287,13 @@ export default function StockAnalysisChat() {
                         : "bg-white/80 backdrop-blur-sm border border-red-100/50 text-gray-900"
                     }`}
                   >
-                    <p className="text-sm leading-relaxed whitespace-pre-line">
-                      {message.content}
-                    </p>
+                    {/* Format answer by splitting by \n and rendering each line */}
+                    {message.content.split("\n").map((line, idx) => (
+                      <span key={idx}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
 
                     {message.stockData && (
                       <Card className="mt-4 bg-gray-50 border-0">
