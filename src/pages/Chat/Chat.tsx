@@ -287,12 +287,16 @@ export default function StockAnalysisChat() {
                         : "bg-white/80 backdrop-blur-sm border border-red-100/50 text-gray-900"
                     }`}
                   >
-                    {/* Format answer by splitting by \n and rendering each line */}
-                    {message.content.split("\n").map((line, idx) => (
-                      <span key={idx}>
-                        {line}
-                        <br />
-                      </span>
+                    {/* Format answer by splitting by \n\n and rendering each paragraph as a <p> */}
+                    {message.content.split(/\n{2,}/).map((para, idx) => (
+                      <p key={idx} className="mb-2">
+                        {para.split("\n").map((line, i) => (
+                          <span key={i}>
+                            {line}
+                            <br />
+                          </span>
+                        ))}
+                      </p>
                     ))}
 
                     {message.stockData && (
