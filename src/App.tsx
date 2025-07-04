@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router'
+import { Route, Routes, useLocation } from 'react-router'
+import { useEffect } from 'react'
 import './App.css'
 import Login from './pages/Login/Login'
 import Register from './pages/Register/Register'
@@ -9,11 +10,19 @@ import UserLayout from './layouts/UserLayout'
 import Podcast from './pages/Podcast/Podcast'
 import Profile from './pages/Profile/Profile'
 import AdminLayout from './layouts/AdminLayout'
-import { AdminDashboard } from './pages/Admin/AdminPage'
+import AdminDashboard from './pages/Admin/AdminDashboard'
 import { Toaster } from 'react-hot-toast'
 import TempLogData from './pages/TempLogData'
+import AdminLogin from './pages/Admin/AdminLogin'
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.pathname.startsWith('/admin')) {
+      localStorage.removeItem('adminToken');
+    }
+  }, [location.pathname]);
 
   return (
     <>
@@ -28,6 +37,7 @@ function App() {
         <Route path='/podcast' element={<UserLayout><Podcast /></UserLayout>} />
         <Route path='/profile' element={<UserLayout><Profile /></UserLayout>} />
         <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+        <Route path='/admin/login' element={<AdminLogin />} />
         <Route path='/data' element={<UserLayout><TempLogData /></UserLayout>} />
       </Routes>
     </>
