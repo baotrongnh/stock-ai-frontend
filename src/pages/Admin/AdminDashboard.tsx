@@ -15,6 +15,8 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 // import { useNavigate } from "react-router"
+import NewsManagement from "./components/NewsManagement.tsx"
+import PodcastManagement from "./components/PodcastManagement.tsx"
 
 function AdminDashboardContent() {
     const [activeView, setActiveView] = useState("statistics")
@@ -37,6 +39,10 @@ function AdminDashboardContent() {
                 return <PostsManagement />
             case "complaints":
                 return <ComplaintsManagement />
+            case "news":
+                return <NewsManagement />
+            case "podcasts":
+                return <PodcastManagement />
             default:
                 return <UserStatistics />
         }
@@ -52,6 +58,10 @@ function AdminDashboardContent() {
                 return "Posts Management"
             case "complaints":
                 return "Complaints Management"
+            case "news":
+                return "News Management"
+            case "podcasts":
+                return "Podcast Management"
             default:
                 return "User Statistics"
         }

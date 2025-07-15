@@ -1,5 +1,4 @@
 import type React from "react"
-import "./globals.css"
 import { Header } from "./Components/Header"
 
 
