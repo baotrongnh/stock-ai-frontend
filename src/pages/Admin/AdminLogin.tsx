@@ -69,14 +69,14 @@ export default function AdminLogin() {
                                    )}
 
                                    <div className="space-y-2">
-                                        <Label htmlFor="email" className="text-red-900 font-medium">
+                                        <Label htmlFor="username" className="text-red-900 font-medium">
                                              Username
                                         </Label>
                                         <Input
-                                             id="email"
+                                             id="username"
                                              name="username"
                                              placeholder="Username admin"
-                                             value={formData.email}
+                                             value={formData.username}
                                              onChange={handleInputChange}
                                              required
                                              className="border-red-200 focus:border-red-400 focus:ring-red-400"
