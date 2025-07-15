@@ -32,11 +32,19 @@ import { PostServices } from "@/apis/posts";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router";
 
+interface Post {
+    postId: number;
+    title: string;
+    content: string;
+    stockId?: number;
+    // Add other fields as needed for your use case
+}
+
 export function PostActions({
     post,
     refetchPost,
 }: {
-    post: any;
+    post: Post;
     refetchPost: () => Promise<void>;
 }) {
     const [isEditOpen, setIsEditOpen] = useState(false);
@@ -47,7 +55,7 @@ export function PostActions({
 
     const handleUpdate = async () => {
         try {
-            const res = await PostServices.updatePostById(post.postId, title, content, post.stockId, file);
+            const res = await PostServices.updatePostById(post.postId, title, content, post.stockId ?? 0, file);
             console.log(res)
             toast.success("Post updated successfully");
             setIsEditOpen(false);
@@ -59,7 +67,7 @@ export function PostActions({
 
     const handleDelete = async () => {
         try {
-            const res =  await PostServices.deletePostById(post.postId);
+            const res = await PostServices.deletePostById(post.postId);
             console.log(res)
             toast.success("Post deleted");
             navigate(`/blog`)

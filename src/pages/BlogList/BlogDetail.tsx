@@ -137,8 +137,16 @@ export default function BlogDetail() {
      }, [post])
 
 
-     if (loading) return <div>Loading...</div>
-     if (!post) return <div>Post not found</div>
+     if (loading) return (
+          <div className="flex w-full min-h-screen justify-center items-center text-center">
+               Loading...
+          </div>
+     )
+     if (!post) return (
+          <div className="flex w-full min-h-screen justify-center items-center text-center">
+               Post not found
+          </div>
+     )
 
      return (
           <div className="flex h-screen bg-gray-50">
@@ -164,8 +172,8 @@ export default function BlogDetail() {
                                    <div className="flex items-center gap-2 mb-4">
                                         {post!.sentiment && (
                                              <Badge className={`text-xs ${post!.sentiment === 'POSITIVE' ? 'bg-green-100 text-green-700' :
-                                                       post!.sentiment === 'NEGATIVE' ? 'bg-red-100 text-red-700' :
-                                                            'bg-gray-100 text-gray-700'
+                                                  post!.sentiment === 'NEGATIVE' ? 'bg-red-100 text-red-700' :
+                                                       'bg-gray-100 text-gray-700'
                                                   }`}>
                                                   {post!.sentiment}
                                              </Badge>
