@@ -1,4 +1,4 @@
-import axiosClient from "./AxiosClient"
+import axiosClient from "./axiosClient"
 
 const createStock = async (
     symbol: string,

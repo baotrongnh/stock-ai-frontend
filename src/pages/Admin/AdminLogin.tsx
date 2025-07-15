@@ -16,6 +16,7 @@ export default function AdminLogin() {
      const [formData, setFormData] = useState({
           username: "",
           password: "",
+          email: ''
      })
      const [showPassword, setShowPassword] = useState(false)
      const [error, setError] = useState("")

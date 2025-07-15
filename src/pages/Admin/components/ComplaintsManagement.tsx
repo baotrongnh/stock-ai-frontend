@@ -82,11 +82,7 @@ const mockComplaints = [
 ]
 
 // Logging functions
-const logDeleteAction = (id: number) => {
-     console.log(`DELETE ACTION - Complaint ID: ${id}`)
-}
-
-const logUpdateAction = (id: number, newData: any) => {
+const logUpdateAction = (id: number, newData: Record<string, unknown>) => {
      console.log(`UPDATE ACTION - Complaint ID: ${id}`)
      console.log("New Data:", newData)
 }
@@ -145,11 +141,6 @@ export function ComplaintsManagement() {
                logUpdateAction(complaintId, { status: newStatus })
                setComplaints(complaints.map((complaint) => (complaint.id === complaintId ? newData : complaint)))
           }
-     }
-
-     const handleDeleteComplaint = (complaintId: number) => {
-          logDeleteAction(complaintId)
-          setComplaints(complaints.filter((complaint) => complaint.id !== complaintId))
      }
 
      const filteredComplaints = complaints.filter((complaint) => {

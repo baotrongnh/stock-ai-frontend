@@ -1,7 +1,7 @@
 import axios from "axios"
 import axiosClient from "./axiosClient"
 
-const loginAdmin = async ({ username, password } : {username: string, password: string}) => {
+const loginAdmin = async ({ username, password }: { username: string, password: string }) => {
      try {
           return await axios.post(`${import.meta.env.VITE_APP_API_URL}admin/login`, { username, password })
      } catch (error) {
@@ -28,7 +28,7 @@ const getListDeletedUsers = async () => {
      }
 }
 
-const deleteUser = async (id) => {
+const deleteUser = async (id: string | number) => {
      try {
           return await axiosClient.delete(`users/${id}`)
      } catch (error) {
@@ -37,7 +37,7 @@ const deleteUser = async (id) => {
      }
 }
 
-const restoreUser = async (id) => {
+const restoreUser = async (id: string | number) => {
      try {
           return await axiosClient.patch(`admin/users/${id}/restore`)
      } catch (error) {
@@ -46,7 +46,7 @@ const restoreUser = async (id) => {
      }
 }
 
-const getAllPosts = async (status)=> {
+const getAllPosts = async (status: string) => {
      try {
           return axiosClient.get('admin/posts/status/filter', {
                params: {
@@ -59,7 +59,7 @@ const getAllPosts = async (status)=> {
      }
 }
 
-const deletePost = async (id) => {
+const deletePost = async (id: string | number) => {
      try {
           return await axiosClient.delete(`admin/posts/${id}`)
      } catch (error) {
@@ -68,7 +68,7 @@ const deletePost = async (id) => {
      }
 }
 
-const restorePost = async (id) => {
+const restorePost = async (id: string | number) => {
      try {
           return await axiosClient.patch(`admin/posts/${id}/restore`)
      } catch (error) {
@@ -77,7 +77,7 @@ const restorePost = async (id) => {
      }
 }
 
-const getDetailPost = async (id) => {
+const getDetailPost = async (id: string | number) => {
      try {
           return await axiosClient.get(`admin/posts/${id}`)
      } catch (error) {

@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button'
 import {
      Activity,
-     ArrowUpRight,
      BarChart3,
      MessageSquare,
      Plus,
@@ -16,7 +15,8 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const ItemType = 'MENU_ITEM'
 
-function DraggableMenuItem({ item, index, moveItem }: any) {
+function DraggableMenuItem({ item, index, moveItem, isActive }: any) {
+     
      const [{ isDragging }, ref] = useDrag({
           type: ItemType,
           item: { index },
@@ -37,14 +37,22 @@ function DraggableMenuItem({ item, index, moveItem }: any) {
 
      return (
           <div
-               ref={(node) => ref(drop(node))}
+               ref={(node) => {
+                    if (node) {
+                         ref(node);
+                         drop(node);
+                    }
+               }}
                className={`relative p-2 rounded-lg transition-all duration-200 ${isDragging ? 'bg-red-100 shadow-lg scale-105' : 'bg-white hover:bg-gray-100'
                     }`}
           >
                <Link to={item.path}>
                     <Button
                          variant="ghost"
-                         className="w-full justify-start group text-gray-700 hover:bg-red-50 hover:text-red-700"
+                         className={`w-full justify-start group ${isActive(item.path)
+                              ? 'text-red-700 bg-red-50'
+                              : 'text-gray-700 hover:bg-red-50 hover:text-red-700'
+                              }`}
                     >
                          <item.icon className="w-4 h-4 mr-3 group-hover:animate-pulse" />
                          {item.label}
@@ -78,7 +86,7 @@ export default function NavbarUser() {
           if (savedOrder) {
                const parsedOrder = JSON.parse(savedOrder)
                setMenuItems((prevItems) =>
-                    parsedOrder.map((id) => prevItems.find((item) => item.id === id) || {})
+                    parsedOrder.map((id: string) => prevItems.find((item) => item.id === id) || {})
                )
           }
      }, [])
@@ -90,6 +98,8 @@ export default function NavbarUser() {
           setMenuItems(updatedItems)
           localStorage.setItem('menuOrder', JSON.stringify(updatedItems.map((item) => item.id)))
      }
+
+     const isActive = (path: string) => location.pathname === path
 
      return (
           <DndProvider backend={HTML5Backend}>
@@ -124,6 +134,7 @@ export default function NavbarUser() {
                                         item={item}
                                         index={index}
                                         moveItem={moveItem}
+                                        isActive={isActive}
                                    />
                               ))}
                          </div>

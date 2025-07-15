@@ -14,7 +14,7 @@ import {
      TrendingUp,
      User
 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 interface Message {
      id: string
@@ -41,13 +41,6 @@ export default function StockAnalysisChat() {
      ])
      const [input, setInput] = useState("")
      const [isLoading, setIsLoading] = useState(false)
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-     const [currentTime, setCurrentTime] = useState(new Date())
-
-     useEffect(() => {
-          const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-          return () => clearInterval(timer)
-     }, [])
 
      const stockSuggestions = [
           {

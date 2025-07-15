@@ -1,4 +1,4 @@
-import axiosClient from "./AxiosClient"
+import axiosClient from "./axiosClient"
 
 const createStockExchange = async (name: string) => {
     const response = await axiosClient.post('/stock-exchanges', {name})
