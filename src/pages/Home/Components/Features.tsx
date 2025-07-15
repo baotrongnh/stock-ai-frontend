@@ -8,7 +8,6 @@ import {
      BarChart3,
      Target,
      Globe,
-     Zap,
      CheckCircle,
      ArrowRight,
      Sparkles,
