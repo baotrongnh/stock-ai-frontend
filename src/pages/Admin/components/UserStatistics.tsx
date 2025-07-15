@@ -19,18 +19,19 @@ import {
 } from "recharts"
 
 const userGrowthData = [
-     { month: "Jan", users: 1200 },
-     { month: "Feb", users: 1350 },
-     { month: "Mar", users: 1580 },
-     { month: "Apr", users: 1720 },
-     { month: "May", users: 1950 },
-     { month: "Jun", users: 2180 },
+     { month: "Jan", users: 0 },
+     { month: "Feb", users: 0 },
+     { month: "Mar", users: 0 },
+     { month: "Apr", users: 0 },
+     { month: "May", users: 0 },
+     { month: "Jun", users: 2 },
+     {month: "Jul", users: 3 },
 ]
 
 const userTypeData = [
-     { name: "Active Users", value: 1850, color: "#dc2626" },
-     { name: "Inactive Users", value: 330, color: "#fca5a5" },
-     { name: "Banned Users", value: 45, color: "#7f1d1d" },
+     { name: "Active Users", value: 3, color: "#dc2626" },
+     { name: "Inactive Users", value: 0, color: "#fca5a5" },
+     { name: "Banned Users", value: 0, color: "#7f1d1d" },
 ]
 
 const activityData = [
@@ -59,10 +60,10 @@ export function UserStatistics() {
                               <Users className="h-4 w-4 text-red-600" />
                          </CardHeader>
                          <CardContent>
-                              <div className="text-2xl font-bold text-red-900">2,225</div>
+                              <div className="text-2xl font-bold text-red-900">3</div>
                               <p className="text-xs text-red-600">
                                    <TrendingUp className="inline h-3 w-3 mr-1" />
-                                   +12% from last month
+                                   +150% from last month
                               </p>
                          </CardContent>
                     </Card>
@@ -73,7 +74,7 @@ export function UserStatistics() {
                               <UserPlus className="h-4 w-4 text-red-600" />
                          </CardHeader>
                          <CardContent>
-                              <div className="text-2xl font-bold text-red-900">+230</div>
+                              <div className="text-2xl font-bold text-red-900">+2</div>
                               <p className="text-xs text-red-600">This month</p>
                          </CardContent>
                     </Card>
@@ -84,8 +85,8 @@ export function UserStatistics() {
                               <UserCheck className="h-4 w-4 text-red-600" />
                          </CardHeader>
                          <CardContent>
-                              <div className="text-2xl font-bold text-red-900">1,850</div>
-                              <p className="text-xs text-red-600">83% of total users</p>
+                              <div className="text-2xl font-bold text-red-900">3</div>
+                              <p className="text-xs text-red-600">100% of total users</p>
                          </CardContent>
                     </Card>
 
@@ -95,8 +96,8 @@ export function UserStatistics() {
                               <UserX className="h-4 w-4 text-red-600" />
                          </CardHeader>
                          <CardContent>
-                              <div className="text-2xl font-bold text-red-900">45</div>
-                              <p className="text-xs text-red-600">2% of total users</p>
+                              <div className="text-2xl font-bold text-red-900">0</div>
+                              <p className="text-xs text-red-600">0% of total users</p>
                          </CardContent>
                     </Card>
                </div>
