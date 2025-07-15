@@ -1,7 +1,7 @@
 import { PostServices } from "@/apis/posts"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { CreatePostModal } from "./components/CreatePostModal"
+import { CreatePostModal } from "./components/CreatePostModal.js"
 import { useEffect, useState } from "react"
 import { Link } from "react-router"
 

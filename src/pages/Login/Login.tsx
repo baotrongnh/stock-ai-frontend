@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router"
 import logo from "../../assets/logo/logo.svg"
-import { GoogleButton } from "./components/GoogleButton"
-import { FacebookButton } from "./components/FacebookButton"
+import { GoogleButton } from "./components/GoogleButton.js"
+import { FacebookButton } from "./components/FacebookButton.js"
 import { login } from '../../apis/login'
 import { UserServices } from "@/apis/user"
 import { Toaster, toast } from "react-hot-toast"

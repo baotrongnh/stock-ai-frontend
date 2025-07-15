@@ -1,4 +1,4 @@
-import axiosClient from "./axiosClient"
+import axiosClient from "./axiosClient.js"
 
 const login = async (email: string, password: string) => {
      try {
@@ -15,7 +15,7 @@ const login = async (email: string, password: string) => {
 
 const loginGoogle = async (accessToken: string) => {
      try {
-          const response = await axiosClient.post('/auth/google', {accessToken});
+          const response = await axiosClient.post('/auth/google', { accessToken });
           return response.data;
      } catch (error) {
           throw new Error(`Error: ${error}`);
@@ -24,7 +24,7 @@ const loginGoogle = async (accessToken: string) => {
 
 const loginFacebook = async (accessToken: string) => {
      try {
-          const response = await axiosClient.post('/auth/facebook', {accessToken});
+          const response = await axiosClient.post('/auth/facebook', { accessToken });
           return response.data;
      } catch (error) {
           throw new Error(`Error: ${error}`);
@@ -46,7 +46,7 @@ const register = async (email: string, password: string, fullName: string) => {
 
 const refreshToken = async (refreshToken: string) => {
      try {
-          const response = await axiosClient.post('/auth/refresh-token', {refreshToken});
+          const response = await axiosClient.post('/auth/refresh-token', { refreshToken });
           return response.data;
      } catch (error) {
           throw new Error(`Error: ${error}`);

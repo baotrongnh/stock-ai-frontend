@@ -1,7 +1,7 @@
-import axiosClient from "./axiosClient"
+import axiosClient from "./axiosClient.js"
 
 const createStockExchange = async (name: string) => {
-    const response = await axiosClient.post('/stock-exchanges', {name})
+    const response = await axiosClient.post('/stock-exchanges', { name })
     return response.data
 }
 
@@ -21,13 +21,13 @@ const getStockExchangeById = async (id: number) => {
 }
 
 const updateStockExchange = async (id: number, name: string) => {
-    const response = await axiosClient.patch(`/stock-exchanges/${id}`, {name})
+    const response = await axiosClient.patch(`/stock-exchanges/${id}`, { name })
     return response.data
 }
 
 const deleteStockExchange = async (id: number) => {
-    const response = await axiosClient.delete(`/stock-exchanges/${id}`) 
-    return response.data 
+    const response = await axiosClient.delete(`/stock-exchanges/${id}`)
+    return response.data
 }
 
 export const StockExchangeServices = {
