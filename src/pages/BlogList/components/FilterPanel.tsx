@@ -1,5 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react"
+import { CalendarDays, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react"
 import { useRef } from "react"
 
 interface Stock {
@@ -9,13 +9,20 @@ interface Stock {
 }
 
 interface FilterPanelProps {
-    stocks: Stock[]
+    availableStocks: Stock[]
+    availableSentiments: string[]
+    availableLevels: string[]
+    availableSessions: number[]
+    availableDates: string[]
     selectedStock: string
     setSelectedStock: (stock: string) => void
     selectedSentiment: string
     setSelectedSentiment: (sentiment: string) => void
     selectedDate: string
     setSelectedDate: (date: string) => void
+    selectedSession: string
+    selectedLevel: string
+    setSelectedLevel: (level: string) => void
     sortBy: string
     setSortBy: (sort: string) => void
     showDatePicker: boolean
@@ -23,19 +30,27 @@ interface FilterPanelProps {
     currentMonth: Date
     setCurrentMonth: (month: Date) => void
     getCalendarDays: () => Date[]
-    getPostDates: () => string[]
     formatDateForInput: (date: Date) => string
     handleDateSelect: (date: Date) => void
+    handleSessionChange: (session: string) => void
+    sessionWarning: string
 }
 
 export function FilterPanel({
-    stocks,
+    availableStocks,
+    availableSentiments,
+    availableLevels,
+    availableSessions,
+    availableDates,
     selectedStock,
     setSelectedStock,
     selectedSentiment,
     setSelectedSentiment,
     selectedDate,
     setSelectedDate,
+    selectedSession,
+    selectedLevel,
+    setSelectedLevel,
     sortBy,
     setSortBy,
     showDatePicker,
@@ -43,9 +58,10 @@ export function FilterPanel({
     currentMonth,
     setCurrentMonth,
     getCalendarDays,
-    getPostDates,
     formatDateForInput,
-    handleDateSelect
+    handleDateSelect,
+    handleSessionChange,
+    sessionWarning
 }: FilterPanelProps) {
     const datePickerRef = useRef<HTMLDivElement>(null)
 
@@ -60,7 +76,7 @@ export function FilterPanel({
                     </SelectTrigger>
                     <SelectContent className="cursor-pointer">
                         <SelectItem value="all">All stocks</SelectItem>
-                        {Array.isArray(stocks) && stocks.length > 0 ? stocks.map((stock) => (
+                        {availableStocks.length > 0 ? availableStocks.map((stock) => (
                             <SelectItem key={stock.stockId} value={stock.stockId.toString()}>
                                 {stock.symbol} - {stock.companyName}
                             </SelectItem>
@@ -80,9 +96,40 @@ export function FilterPanel({
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All sentiments</SelectItem>
-                        <SelectItem value="POSITIVE">Positive</SelectItem>
-                        <SelectItem value="NEGATIVE">Negative</SelectItem>
-                        <SelectItem value="NEUTRAL">Neutral</SelectItem>
+                        {availableSentiments.includes('POSITIVE') && (
+                            <SelectItem value="POSITIVE">Positive</SelectItem>
+                        )}
+                        {availableSentiments.includes('NEGATIVE') && (
+                            <SelectItem value="NEGATIVE">Negative</SelectItem>
+                        )}
+                        {availableSentiments.includes('NEUTRAL') && (
+                            <SelectItem value="NEUTRAL">Neutral</SelectItem>
+                        )}
+                        {availableSentiments.length === 0 && (
+                            <SelectItem value="no-sentiments" disabled>No sentiments available</SelectItem>
+                        )}
+                    </SelectContent>
+                </Select>
+            </div>
+
+            {/* Level Filter */}
+            <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Level</label>
+                <Select value={selectedLevel} onValueChange={setSelectedLevel}>
+                    <SelectTrigger className="cursor-pointer">
+                        <SelectValue placeholder="All levels" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All levels</SelectItem>
+                        {availableLevels.includes('MARKET') && (
+                            <SelectItem value="MARKET">Market Level</SelectItem>
+                        )}
+                        {availableLevels.includes('SYMBOL') && (
+                            <SelectItem value="SYMBOL">Symbol Level</SelectItem>
+                        )}
+                        {availableLevels.length === 0 && (
+                            <SelectItem value="no-levels" disabled>No levels available</SelectItem>
+                        )}
                     </SelectContent>
                 </Select>
             </div>
@@ -136,7 +183,7 @@ export function FilterPanel({
                             <div className="grid grid-cols-7 gap-1">
                                 {getCalendarDays().map((date, index) => {
                                     const dateStr = formatDateForInput(date)
-                                    const hasPost = getPostDates().includes(dateStr)
+                                    const hasPost = availableDates.includes(dateStr)
                                     const isCurrentMonth = date.getMonth() === currentMonth.getMonth()
                                     const isSelected = selectedDate === dateStr
                                     const today = new Date()
@@ -192,6 +239,37 @@ export function FilterPanel({
                         </div>
                     )}
                 </div>
+            </div>
+
+            {/* Session Filter */}
+            <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Session</label>
+                <Select
+                    value={selectedSession}
+                    onValueChange={handleSessionChange}
+                    disabled={!selectedDate}
+                >
+                    <SelectTrigger className={`cursor-pointer ${!selectedDate ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                        <SelectValue placeholder="All sessions" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All sessions</SelectItem>
+                        {availableSessions.map(session => (
+                            <SelectItem key={session} value={session.toString()}>
+                                Session {session}
+                            </SelectItem>
+                        ))}
+                        {availableSessions.length === 0 && selectedDate && (
+                            <SelectItem value="no-sessions" disabled>No sessions available for this date</SelectItem>
+                        )}
+                    </SelectContent>
+                </Select>
+                {sessionWarning && (
+                    <div className="flex items-center gap-1 text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                        <AlertTriangle className="h-3 w-3" />
+                        <span>{sessionWarning}</span>
+                    </div>
+                )}
             </div>
 
             {/* Sort By */}

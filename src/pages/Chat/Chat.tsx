@@ -15,8 +15,8 @@ import {
   TrendingUp,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { formatText } from "../../utils/formatText.js";
+import { useState } from "react";
+import { formatText } from "../../utils/formatText";
 
 
 interface Message {
@@ -205,9 +205,8 @@ export default function StockAnalysisChat() {
             messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex gap-4 ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex gap-4 ${message.role === "user" ? "justify-end" : "justify-start"
+                  }`}
               >
                 {message.role === "assistant" && (
                   <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
@@ -216,16 +215,14 @@ export default function StockAnalysisChat() {
                 )}
 
                 <div
-                  className={`max-w-2xl ${
-                    message.role === "user" ? "order-first" : ""
-                  }`}
+                  className={`max-w-2xl ${message.role === "user" ? "order-first" : ""
+                    }`}
                 >
                   <div
-                    className={`rounded-3xl p-6 shadow-lg ${
-                      message.role === "user"
-                        ? "bg-gradient-to-r from-red-500 to-red-600 text-white ml-auto"
-                        : "bg-white/80 backdrop-blur-sm border border-red-100/50 text-gray-900"
-                    }`}
+                    className={`rounded-3xl p-6 shadow-lg ${message.role === "user"
+                      ? "bg-gradient-to-r from-red-500 to-red-600 text-white ml-auto"
+                      : "bg-white/80 backdrop-blur-sm border border-red-100/50 text-gray-900"
+                      }`}
                   >
                     {/* Format answer using formatText utility */}
                     {formatText(message.content)
@@ -251,11 +248,10 @@ export default function StockAnalysisChat() {
                                 ${message.stockData.price}
                               </div>
                               <div
-                                className={`flex items-center gap-1 text-sm ${
-                                  message.stockData.change >= 0
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                                }`}
+                                className={`flex items-center gap-1 text-sm ${message.stockData.change >= 0
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                                  }`}
                               >
                                 {message.stockData.change >= 0 ? (
                                   <TrendingUp className="w-4 h-4" />
@@ -276,9 +272,8 @@ export default function StockAnalysisChat() {
                   </div>
 
                   <div
-                    className={`text-xs text-gray-500 mt-2 ${
-                      message.role === "user" ? "text-right" : "text-left"
-                    }`}
+                    className={`text-xs text-gray-500 mt-2 ${message.role === "user" ? "text-right" : "text-left"
+                      }`}
                   >
                     {message.timestamp.toLocaleTimeString()}
                   </div>

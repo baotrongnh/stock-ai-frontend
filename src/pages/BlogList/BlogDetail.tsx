@@ -28,12 +28,15 @@ interface Comment {
 
 interface Post {
      viewCount?: number
+     likeCount?: number
      postId: number
      title: string
      content: string
      sentiment?: string
      level?: string
      topic?: string
+     session?: number
+     status?: string
      tags?: string[]
      author?: string
      createdAt: string
@@ -41,6 +44,7 @@ interface Post {
      expertId?: number
      expert?: {
           fullName: string
+          avatarUrl?: string
      }
      stock?: {
           symbol: string
@@ -49,10 +53,6 @@ interface Post {
 }
 
 const DEFAULT_IMAGE = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
-
-function getViewCount(post: Post) {
-     return typeof post.viewCount === "number" ? post.viewCount : 0;
-}
 
 export default function BlogDetail() {
      const { id } = useParams()
@@ -213,8 +213,17 @@ export default function BlogDetail() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                              <Eye className="w-4 h-4" />
-                                             {post ? getViewCount(post) : 0} views
+                                             {post?.viewCount || 0} views
                                         </div>
+                                        <div className="flex items-center gap-2">
+                                             <ThumbsUp className="w-4 h-4" />
+                                             {post?.likeCount || 0} likes
+                                        </div>
+                                        {post?.session && (
+                                             <div className="flex items-center gap-2">
+                                                  <span className="text-sm">Session {post.session}</span>
+                                             </div>
+                                        )}
                                    </div>
 
                                    <img
@@ -245,7 +254,7 @@ export default function BlogDetail() {
                                         <div className="flex items-center gap-4">
                                              <Button variant="outline" className="border-red-200 text-red-600 hover:bg-red-50">
                                                   <ThumbsUp className="w-4 h-4 mr-2" />
-                                                  Like Article
+                                                  Like Article ({post?.likeCount || 0})
                                              </Button>
                                              <div className="flex items-center gap-2 text-sm text-gray-600">
                                                   <MessageSquare className="w-4 h-4" />

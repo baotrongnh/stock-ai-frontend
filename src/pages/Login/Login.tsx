@@ -17,7 +17,7 @@ export default function Login() {
 
   useEffect(() => {
     const userId = localStorage.getItem('userId')
-    if (userId) navigate('/profile')
+    if (userId) navigate('/blog')
   }, [navigate])
 
   const handleLogin = async (e?: React.FormEvent) => {
@@ -36,7 +36,7 @@ export default function Login() {
 
         toast.success("Login successful!")
         setTimeout(() => {
-          navigate("/profile", { state: { user: userProfile.data } })
+          navigate("/blog", { state: { user: userProfile.data } })
         }, 1000)
       } else {
         toast.error("Invalid email or password")

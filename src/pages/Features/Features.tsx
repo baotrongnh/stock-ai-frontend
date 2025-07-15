@@ -11,8 +11,7 @@ import {
      Shield,
      Star,
      Target,
-     TrendingUp,
-     Zap
+     TrendingUp
 } from "lucide-react"
 
 export default function Features() {

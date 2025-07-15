@@ -15,8 +15,26 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const ItemType = 'MENU_ITEM'
 
-function DraggableMenuItem({ item, index, moveItem, isActive }: any) {
-     
+interface MenuItem {
+     id: string
+     label: string
+     icon: React.ComponentType<{ className?: string }>
+     path: string
+}
+
+interface DraggableMenuItemProps {
+     item: MenuItem
+     index: number
+     moveItem: (fromIndex: number, toIndex: number) => void
+     isActive: (path: string) => boolean
+}
+
+interface DraggedItem {
+     index: number
+}
+
+function DraggableMenuItem({ item, index, moveItem, isActive }: DraggableMenuItemProps) {
+
      const [{ isDragging }, ref] = useDrag({
           type: ItemType,
           item: { index },
@@ -27,7 +45,7 @@ function DraggableMenuItem({ item, index, moveItem, isActive }: any) {
 
      const [, drop] = useDrop({
           accept: ItemType,
-          hover: (draggedItem: any) => {
+          hover: (draggedItem: DraggedItem) => {
                if (draggedItem.index !== index) {
                     moveItem(draggedItem.index, index)
                     draggedItem.index = index
