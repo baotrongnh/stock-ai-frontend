@@ -1,4 +1,3 @@
-
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -17,6 +16,7 @@ import {
      Volume2
 } from "lucide-react"
 import { useState } from "react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface Video {
      id: string
@@ -34,9 +34,7 @@ interface Video {
 
 export default function Podcast() {
      const [searchQuery, setSearchQuery] = useState("")
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
      const [selectedCategory, setSelectedCategory] = useState("all")
-     // eslint-disable-next-line @typescript-eslint/no-unused-vars
      const [selectedType, setSelectedType] = useState("all")
 
      const videos: Video[] = [
@@ -172,6 +170,40 @@ export default function Podcast() {
                                    <Filter className="w-4 h-4 mr-2" />
                                    Filter
                               </Button>
+                         </div>
+
+                         {/* Category and Type Selectors */}
+                         <div className="flex gap-4 mt-4">
+                              <div className="flex-1">
+                                   <Select
+                                        value={selectedCategory}
+                                        onValueChange={setSelectedCategory}
+                                   >
+                                        <SelectTrigger className="w-full">
+                                             <SelectValue placeholder="All Categories" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                             <SelectItem value="all">All Categories</SelectItem>
+                                             <SelectItem value="news">News</SelectItem>
+                                             <SelectItem value="analysis">Analysis</SelectItem>
+                                        </SelectContent>
+                                   </Select>
+                              </div>
+                              <div className="flex-1">
+                                   <Select
+                                        value={selectedType}
+                                        onValueChange={setSelectedType}
+                                   >
+                                        <SelectTrigger className="w-full">
+                                             <SelectValue placeholder="All Types" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                             <SelectItem value="all">All Types</SelectItem>
+                                             <SelectItem value="audio">Audio</SelectItem>
+                                             <SelectItem value="video">Video</SelectItem>
+                                        </SelectContent>
+                                   </Select>
+                              </div>
                          </div>
                     </div>
 

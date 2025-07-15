@@ -1,4 +1,4 @@
-import axiosClient from "./AxiosClient";
+import axiosClient from "./axiosClient.ts";
 
 const getPosts = async (page: number, pageSize: number) => {
     const response = await axiosClient.get('/posts', {

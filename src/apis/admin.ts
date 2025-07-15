@@ -1,13 +1,89 @@
-import axiosClient from "./axiosClient";
+import axios from "axios"
+import axiosClient from "./axiosClient"
 
-const getAllUsers = async () => { 
+const loginAdmin = async ({ username, password }: { username: string, password: string }) => {
+     try {
+          return await axios.post(`${import.meta.env.VITE_APP_API_URL}admin/login`, { username, password })
+     } catch (error) {
+          console.log(error)
+     }
+}
+
+const getAllUsers = async () => {
      try {
           return axiosClient.get('users')
      } catch (error) {
           console.error("Error fetching users:", error);
           throw error;
-          
+
      }
 }
 
-export {getAllUsers}
+const getListDeletedUsers = async () => {
+     try {
+          return await axiosClient.get('admin/users/deleted')
+     } catch (error) {
+          console.error("Error fetching deleted users:", error);
+          throw error;
+     }
+}
+
+const deleteUser = async (id: string | number) => {
+     try {
+          return await axiosClient.delete(`users/${id}`)
+     } catch (error) {
+          console.error("Error deleting user:", error);
+          throw error;
+     }
+}
+
+const restoreUser = async (id: string | number) => {
+     try {
+          return await axiosClient.patch(`admin/users/${id}/restore`)
+     } catch (error) {
+          console.error("Error restoring user:", error);
+          throw error;
+     }
+}
+
+const getAllPosts = async (status: string) => {
+     try {
+          return axiosClient.get('admin/posts/status/filter', {
+               params: {
+                    status
+               }
+          })
+     } catch (error) {
+          console.error("Error fetching posts:", error);
+          throw error;
+     }
+}
+
+const deletePost = async (id: string | number) => {
+     try {
+          return await axiosClient.delete(`admin/posts/${id}`)
+     } catch (error) {
+          console.error("Error deleting post:", error);
+          throw error;
+     }
+}
+
+const restorePost = async (id: string | number) => {
+     try {
+          return await axiosClient.patch(`admin/posts/${id}/restore`)
+     } catch (error) {
+          console.error("Error restoring post:", error);
+          throw error;
+     }
+}
+
+const getDetailPost = async (id: string | number) => {
+     try {
+          return await axiosClient.get(`admin/posts/${id}`)
+     } catch (error) {
+          console.error("Error fetching post details:", error);
+          throw error;
+     }
+}
+
+export { getAllUsers, deleteUser, loginAdmin, getAllPosts, deletePost, getDetailPost, restorePost, restoreUser, getListDeletedUsers }

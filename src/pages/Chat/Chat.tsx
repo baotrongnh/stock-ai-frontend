@@ -18,6 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import { formatText } from "../../utils/formatText.js";
 
+
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -32,6 +33,7 @@ interface Message {
 }
 
 export default function StockAnalysisChat() {
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -50,6 +52,7 @@ export default function StockAnalysisChat() {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
 
   const stockSuggestions = [
     {

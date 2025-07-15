@@ -1,6 +1,7 @@
 // src/components/GoogleButton.tsx
 import { useEffect } from 'react';
 import { loginGoogle } from '../../../apis/login';
+import { useNavigate } from 'react-router';
 
 declare global {
     interface Window {
@@ -33,9 +34,13 @@ function decodeJWT(token: string): JwtPayload {
 }
 
 export const GoogleButton = () => {
+    const navigate = useNavigate()
     const sendToken = async (token: string) => {
         try {
             const response = await loginGoogle(token); // Gửi về backend
+            if (response.access_token) {
+                navigate('/');
+            }
             console.log('Server response:', response);
         } catch (error) {
             console.error('Error sending token:', error);

@@ -183,14 +183,20 @@ export default function Profile() {
           }))
      }
 
+     // Fix the spread type error by checking if it's an object
      const handleNestedChange = (parent: string, field: string, value: any) => {
-          setEditedProfile((prev) => ({
-               ...prev,
-               [parent]: {
-                    ...prev[parent as keyof UserProfile],
-                    [field]: value,
-               },
-          }))
+          setEditedProfile((prev) => {
+               const parentValue = prev[parent as keyof UserProfile];
+               const existingParent = (parentValue && typeof parentValue === 'object') ? parentValue as Record<string, any> : {};
+               
+               return {
+                    ...prev,
+                    [parent]: {
+                         ...existingParent,
+                         [field]: value,
+                    },
+               };
+          });
      }
 
      return (

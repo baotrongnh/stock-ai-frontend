@@ -1,4 +1,4 @@
-import axiosClient from "./AxiosClient"
+import axiosClient from "./axiosClient.ts"
 
 const createStock = async (
     symbol: string,
@@ -29,8 +29,8 @@ const getStockById = async (id: number) => {
 
 
 const updateStock = async (
-    id: number, 
-    symbol?: string, 
+    id: number,
+    symbol?: string,
     companyName?: string
 ) => {
     const response = await axiosClient.patch(`/stocks/${id}`, {

@@ -29,7 +29,7 @@ export default function TempLogData() {
     }
 
     const fetchStockCrawlData = async () => {
-        const res = await StockCrawlDataService.getStockCrawlDataById(1, 20)
+        const res = await StockCrawlDataService.getStockCrawlDataById(1)
         console.log("Stock Crawl Data: ", res)
     }
 

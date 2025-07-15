@@ -1,3 +1,3 @@
-import NavbarUser from "./NavbarUser"
+import NavbarUser from "./NavbarUser.tsx"
 
 export { NavbarUser }

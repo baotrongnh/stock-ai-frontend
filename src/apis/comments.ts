@@ -1,4 +1,4 @@
-import axiosClient from "./AxiosClient"
+import axiosClient from "./axiosClient.ts"
 
 export type CreateCommentPayload = {
     postId: number
