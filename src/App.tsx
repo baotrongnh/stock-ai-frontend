@@ -20,6 +20,7 @@ import Solutions from './pages/Solutions/Solutions.tsx'
 import Pricing from './pages/Pricing/Pricing.tsx'
 import Resources from './pages/Resources/Resources.tsx'
 import Contact from './pages/Contact/Contact.tsx'
+import RootLayout from './pages/Home/Layout.tsx'
 
 function App() {
   const location = useLocation();
@@ -35,11 +36,11 @@ function App() {
       <Toaster position="top-right" />
       <Routes>
         <Route path='/' element={<StockAILanding />} />
-        <Route path='/features' element={<Features />} />
-        <Route path='/solutions' element={<Solutions />} />
-        <Route path='/pricing' element={<Pricing />} />
-        <Route path='/resources' element={<Resources />} />
-        <Route path='/contact' element={<Contact />} />
+        <Route path='/features' element={<RootLayout><Features /></RootLayout>} />
+        <Route path='/solutions' element={<RootLayout><Solutions /></RootLayout>} />
+        <Route path='/pricing' element={<RootLayout><Pricing /></RootLayout>} />
+        <Route path='/resources' element={<RootLayout><Resources /></RootLayout>} />
+        <Route path='/contact' element={<RootLayout><Contact /></RootLayout>} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/chat' element={<UserLayout><Chat /></UserLayout>} />

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { BarChart3, FileText, AlertTriangle, Shield, LogOut, User, Users } from "lucide-react"
+import { Mic, Newspaper } from "lucide-react" // Import icons for News and Podcast
 
 const navigationItems = [
      {
@@ -47,6 +48,16 @@ const navigationItems = [
                     title: "Complaints Management",
                     icon: AlertTriangle,
                     key: "complaints",
+               },
+               {
+                    title: "News Management", // Added News Management
+                    icon: Newspaper,
+                    key: "news",
+               },
+               {
+                    title: "Podcast Management", // Added Podcast Management
+                    icon: Mic,
+                    key: "podcasts",
                },
           ],
      },
