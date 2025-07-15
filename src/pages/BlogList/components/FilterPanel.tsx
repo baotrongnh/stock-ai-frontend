@@ -50,7 +50,7 @@ export function FilterPanel({
     const datePickerRef = useRef<HTMLDivElement>(null)
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-white/50 rounded-lg border border-red-100">
+        <div className="flex flex-wrap items-start gap-4 p-4 bg-white/50 rounded-lg border border-red-100">
             {/* Stock Filter */}
             <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Stock</label>
