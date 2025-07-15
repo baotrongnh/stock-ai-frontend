@@ -14,6 +14,12 @@ import AdminDashboard from './pages/Admin/AdminDashboard.tsx'
 import { Toaster } from 'react-hot-toast'
 import TempLogData from './pages/TempLogData.tsx'
 import AdminLogin from './pages/Admin/AdminLogin.tsx'
+import StockAILanding from './pages/Home/Home.tsx'
+import Features from './pages/Features/Features.tsx'
+import Solutions from './pages/Solutions/Solutions.tsx'
+import Pricing from './pages/Pricing/Pricing.tsx'
+import Resources from './pages/Resources/Resources.tsx'
+import Contact from './pages/Contact/Contact.tsx'
 
 function App() {
   const location = useLocation();
@@ -28,7 +34,12 @@ function App() {
     <>
       <Toaster position="top-right" />
       <Routes>
-        <Route path='/' element={<UserLayout><BlogList /></UserLayout>} />
+        <Route path='/' element={<StockAILanding />} />
+        <Route path='/features' element={<Features />} />
+        <Route path='/solutions' element={<Solutions />} />
+        <Route path='/pricing' element={<Pricing />} />
+        <Route path='/resources' element={<Resources />} />
+        <Route path='/contact' element={<Contact />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
         <Route path='/chat' element={<UserLayout><Chat /></UserLayout>} />
