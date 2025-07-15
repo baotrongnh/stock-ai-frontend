@@ -1,4 +1,5 @@
 import { Route, Routes, useLocation } from 'react-router'
+import ProtectedRoute from './routes/ProtectedRoute'
 import { useEffect } from 'react'
 import './App.css'
 import Login from './pages/Login/Login.tsx'
@@ -36,21 +37,23 @@ function App() {
       <Toaster position="top-right" />
       <Routes>
         <Route path='/' element={<StockAILanding />} />
-        <Route path='/features' element={<RootLayout><Features /></RootLayout>} />
-        <Route path='/solutions' element={<RootLayout><Solutions /></RootLayout>} />
-        <Route path='/pricing' element={<RootLayout><Pricing /></RootLayout>} />
-        <Route path='/resources' element={<RootLayout><Resources /></RootLayout>} />
-        <Route path='/contact' element={<RootLayout><Contact /></RootLayout>} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
-        <Route path='/chat' element={<UserLayout><Chat /></UserLayout>} />
-        <Route path='/blog' element={<UserLayout><BlogList /></UserLayout>} />
-        <Route path='/blog/:id' element={<UserLayout><BlogDetail /></UserLayout>} />
-        <Route path='/podcast' element={<UserLayout><Podcast /></UserLayout>} />
-        <Route path='/profile' element={<UserLayout><Profile /></UserLayout>} />
-        <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
         <Route path='/admin/login' element={<AdminLogin />} />
-        <Route path='/data' element={<UserLayout><TempLogData /></UserLayout>} />
+
+        {/* Protected Routes */}
+        <Route path='/features' element={<ProtectedRoute><RootLayout><Features /></RootLayout></ProtectedRoute>} />
+        <Route path='/solutions' element={<ProtectedRoute><RootLayout><Solutions /></RootLayout></ProtectedRoute>} />
+        <Route path='/pricing' element={<ProtectedRoute><RootLayout><Pricing /></RootLayout></ProtectedRoute>} />
+        <Route path='/resources' element={<ProtectedRoute><RootLayout><Resources /></RootLayout></ProtectedRoute>} />
+        <Route path='/contact' element={<ProtectedRoute><RootLayout><Contact /></RootLayout></ProtectedRoute>} />
+        <Route path='/chat' element={<ProtectedRoute><UserLayout><Chat /></UserLayout></ProtectedRoute>} />
+        <Route path='/blog' element={<ProtectedRoute><UserLayout><BlogList /></UserLayout></ProtectedRoute>} />
+        <Route path='/blog/:id' element={<ProtectedRoute><UserLayout><BlogDetail /></UserLayout></ProtectedRoute>} />
+        <Route path='/podcast' element={<ProtectedRoute><UserLayout><Podcast /></UserLayout></ProtectedRoute>} />
+        <Route path='/profile' element={<ProtectedRoute><UserLayout><Profile /></UserLayout></ProtectedRoute>} />
+        <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+        <Route path='/data' element={<ProtectedRoute><UserLayout><TempLogData /></UserLayout></ProtectedRoute>} />
       </Routes>
     </>
   )

@@ -16,6 +16,10 @@ interface ActiveFiltersProps {
     setSelectedSentiment: (sentiment: string) => void
     selectedDate: string
     setSelectedDate: (date: string) => void
+    selectedSession: string
+    setSelectedSession: (session: string) => void
+    selectedLevel: string
+    setSelectedLevel: (level: string) => void
     sortBy: string
     setSortBy: (sort: string) => void
     stocks: Stock[]
@@ -30,6 +34,10 @@ export function ActiveFilters({
     setSelectedSentiment,
     selectedDate,
     setSelectedDate,
+    selectedSession,
+    setSelectedSession,
+    selectedLevel,
+    setSelectedLevel,
     sortBy,
     setSortBy,
     stocks
@@ -61,7 +69,21 @@ export function ActiveFilters({
         return sortMap[sort] || sort
     }
 
-    const hasActiveFilters = searchTerm || selectedStock !== 'all' || selectedSentiment !== 'all' || selectedDate || sortBy !== 'newest'
+    // Helper function to get session display name
+    const getSessionDisplayName = (session: string) => {
+        return `Session ${session}`
+    }
+
+    // Helper function to get level display name
+    const getLevelDisplayName = (level: string) => {
+        const levelMap: { [key: string]: string } = {
+            'MARKET': 'Market Level',
+            'SYMBOL': 'Symbol Level'
+        }
+        return levelMap[level] || level
+    }
+
+    const hasActiveFilters = searchTerm || selectedStock !== 'all' || selectedSentiment !== 'all' || selectedDate || selectedSession !== 'all' || selectedLevel !== 'all' || sortBy !== 'newest'
 
     if (!hasActiveFilters) {
         return null
@@ -116,6 +138,32 @@ export function ActiveFilters({
                     <button
                         type="button"
                         onClick={() => setSelectedDate("")}
+                        className="ml-2 p-0.5 hover:bg-red-200 rounded-full transition-colors"
+                    >
+                        <X className="h-3 w-3" />
+                    </button>
+                </Badge>
+            )}
+
+            {selectedSession !== 'all' && (
+                <Badge variant="secondary" className="bg-red-100 text-red-800 border-red-200">
+                    Session: {getSessionDisplayName(selectedSession)}
+                    <button
+                        type="button"
+                        onClick={() => setSelectedSession('all')}
+                        className="ml-2 p-0.5 hover:bg-red-200 rounded-full transition-colors"
+                    >
+                        <X className="h-3 w-3" />
+                    </button>
+                </Badge>
+            )}
+
+            {selectedLevel !== 'all' && (
+                <Badge variant="secondary" className="bg-red-100 text-red-800 border-red-200">
+                    Level: {getLevelDisplayName(selectedLevel)}
+                    <button
+                        type="button"
+                        onClick={() => setSelectedLevel('all')}
                         className="ml-2 p-0.5 hover:bg-red-200 rounded-full transition-colors"
                     >
                         <X className="h-3 w-3" />

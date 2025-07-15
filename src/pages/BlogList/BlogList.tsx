@@ -16,10 +16,19 @@ export default function BlogPage() {
           setSelectedSentiment,
           selectedDate,
           setSelectedDate,
+          selectedSession,
+          setSelectedSession,
+          selectedLevel,
+          setSelectedLevel,
           sortBy,
           setSortBy,
           showFilters,
           setShowFilters,
+          availableStocks,
+          availableSentiments,
+          availableLevels,
+          availableSessions,
+          availableDates,
           currentPage,
           setCurrentPage,
           totalPages,
@@ -30,9 +39,10 @@ export default function BlogPage() {
           currentMonth,
           setCurrentMonth,
           getCalendarDays,
-          getPostDates,
           formatDateForInput,
           handleDateSelect,
+          handleSessionChange,
+          sessionWarning,
           hasActiveFilters,
           clearFilters
      } = useBlogFilters()
@@ -75,13 +85,20 @@ export default function BlogPage() {
 
                               {showFilters && (
                                    <FilterPanel
-                                        stocks={stocks}
+                                        availableStocks={availableStocks}
+                                        availableSentiments={availableSentiments}
+                                        availableLevels={availableLevels}
+                                        availableSessions={availableSessions}
+                                        availableDates={availableDates}
                                         selectedStock={selectedStock}
                                         setSelectedStock={setSelectedStock}
                                         selectedSentiment={selectedSentiment}
                                         setSelectedSentiment={setSelectedSentiment}
                                         selectedDate={selectedDate}
                                         setSelectedDate={setSelectedDate}
+                                        selectedSession={selectedSession}
+                                        selectedLevel={selectedLevel}
+                                        setSelectedLevel={setSelectedLevel}
                                         sortBy={sortBy}
                                         setSortBy={setSortBy}
                                         showDatePicker={showDatePicker}
@@ -89,9 +106,10 @@ export default function BlogPage() {
                                         currentMonth={currentMonth}
                                         setCurrentMonth={setCurrentMonth}
                                         getCalendarDays={getCalendarDays}
-                                        getPostDates={getPostDates}
                                         formatDateForInput={formatDateForInput}
                                         handleDateSelect={handleDateSelect}
+                                        handleSessionChange={handleSessionChange}
+                                        sessionWarning={sessionWarning}
                                    />
                               )}
 
@@ -104,6 +122,10 @@ export default function BlogPage() {
                                    setSelectedSentiment={setSelectedSentiment}
                                    selectedDate={selectedDate}
                                    setSelectedDate={setSelectedDate}
+                                   selectedSession={selectedSession}
+                                   setSelectedSession={setSelectedSession}
+                                   selectedLevel={selectedLevel}
+                                   setSelectedLevel={setSelectedLevel}
                                    sortBy={sortBy}
                                    setSortBy={setSortBy}
                                    stocks={stocks}
@@ -126,7 +148,7 @@ export default function BlogPage() {
                                         </div>
                                    )}
 
-                                   <PostGrid posts={posts} />
+                                   <PostGrid posts={posts} searchTerm={searchTerm} />
 
                                    <PaginationControls
                                         currentPage={currentPage}
