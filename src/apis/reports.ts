@@ -1,4 +1,4 @@
-import axiosClient from "./axiosClient"
+import axiosClient from "./axiosClient.ts"
 
 type ReportPayload = {
     postId?: number

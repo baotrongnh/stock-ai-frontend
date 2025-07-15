@@ -16,7 +16,7 @@ import {
 } from "lucide-react"
 import { useEffect, useState, useCallback } from "react"
 import { Link, useParams } from "react-router"
-import { PostActions } from "./components/PostActions"
+import { PostActions } from "./components/PostActions.tsx"
 
 interface Comment {
      id: string
