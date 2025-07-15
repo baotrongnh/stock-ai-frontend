@@ -14,11 +14,11 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { useNavigate } from "react-router"
+// import { useNavigate } from "react-router"
 
 function AdminDashboardContent() {
     const [activeView, setActiveView] = useState("statistics")
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
 
     useEffect(() => {
         const token = localStorage.getItem("adminToken")
