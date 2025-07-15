@@ -14,7 +14,7 @@ import {
      ThumbsUp,
      User
 } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Link, useParams } from "react-router"
 import { PostActions } from "./components/PostActions.tsx"
 
@@ -26,15 +26,37 @@ interface Comment {
      likes: number
 }
 
+interface Post {
+     viewCount?: number
+     postId: number
+     title: string
+     content: string
+     sentiment?: string
+     level?: string
+     topic?: string
+     tags?: string[]
+     author?: string
+     createdAt: string
+     sourceUrl?: string
+     expertId?: number
+     expert?: {
+          fullName: string
+     }
+     stock?: {
+          symbol: string
+          companyName: string
+     }
+}
+
 const DEFAULT_IMAGE = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
 
-function getViewCount(post: any) {
+function getViewCount(post: Post) {
      return typeof post.viewCount === "number" ? post.viewCount : 0;
 }
 
 export default function BlogDetail() {
      const { id } = useParams()
-     const [post, setPost] = useState<any>(null)
+     const [post, setPost] = useState<Post | null>(null)
      const [loading, setLoading] = useState(true)
      const [newComment, setNewComment] = useState("")
      const [comments, setComments] = useState<Comment[]>([
@@ -58,7 +80,7 @@ export default function BlogDetail() {
      const [normalizedContent, setNormalizedContent] = useState("")
      const userId = Number(localStorage.getItem('userId'))
 
-     const fetchPost = async () => {
+     const fetchPost = useCallback(async () => {
           setLoading(true)
           try {
                const res = await PostServices.getPostById(Number(id))
@@ -76,12 +98,11 @@ export default function BlogDetail() {
           } finally {
                setLoading(false)
           }
-     }
+     }, [id])
 
      useEffect(() => {
           fetchPost()
-
-     }, [id])
+     }, [id, fetchPost])
 
      // useEffect(() => {
      //      if (post) {
@@ -116,8 +137,16 @@ export default function BlogDetail() {
      }, [post])
 
 
-     if (loading) return <div>Loading...</div>
-     if (!loading && !post) return <div>Post not found</div>
+     if (loading) return (
+          <div className="flex w-full min-h-screen justify-center items-center text-center">
+               Loading...
+          </div>
+     )
+     if (!post) return (
+          <div className="flex w-full min-h-screen justify-center items-center text-center">
+               Post not found
+          </div>
+     )
 
      return (
           <div className="flex h-screen bg-gray-50">
@@ -141,34 +170,56 @@ export default function BlogDetail() {
                               {/* Article Header */}
                               <div className="mb-8">
                                    <div className="flex items-center gap-2 mb-4">
-                                        <Badge className="bg-red-100 text-red-700">{post.category}</Badge>
-                                        {post.tags?.map((tag: string) => (
+                                        {post!.sentiment && (
+                                             <Badge className={`text-xs ${post!.sentiment === 'POSITIVE' ? 'bg-green-100 text-green-700' :
+                                                  post!.sentiment === 'NEGATIVE' ? 'bg-red-100 text-red-700' :
+                                                       'bg-gray-100 text-gray-700'
+                                                  }`}>
+                                                  {post!.sentiment}
+                                             </Badge>
+                                        )}
+                                        {post!.level && (
+                                             <Badge variant="outline" className="text-xs border-blue-200 text-blue-700">
+                                                  {post!.level === 'MARKET' ? 'Market Level' : 'Stock Level'}
+                                             </Badge>
+                                        )}
+                                        {post!.topic && (
+                                             <Badge variant="outline" className="text-xs border-purple-200 text-purple-700">
+                                                  {post!.topic}
+                                             </Badge>
+                                        )}
+                                        {post!.stock && (
+                                             <Badge variant="outline" className="text-xs border-orange-200 text-orange-700">
+                                                  {post!.stock.symbol}
+                                             </Badge>
+                                        )}
+                                        {post!.tags?.map((tag: string) => (
                                              <Badge key={tag} variant="outline" className="text-xs">
                                                   {tag}
                                              </Badge>
                                         ))}
                                    </div>
 
-                                   <h1 className="text-4xl font-bold text-gray-900 mb-4">{post.title}</h1>
+                                   <h1 className="text-4xl font-bold text-gray-900 mb-4">{post!.title}</h1>
 
                                    <div className="flex items-center gap-6 text-sm text-gray-600 mb-6">
                                         <div className="flex items-center gap-2">
                                              <User className="w-4 h-4" />
-                                             {post.author}
+                                             {post!.expert?.fullName || post!.author || 'Unknown Author'}
                                         </div>
                                         <div className="flex items-center gap-2">
                                              <Calendar className="w-4 h-4" />
-                                             {new Date(post.createdAt).toLocaleDateString()}
+                                             {new Date(post!.createdAt).toLocaleDateString()}
                                         </div>
                                         <div className="flex items-center gap-2">
                                              <Eye className="w-4 h-4" />
-                                             {getViewCount(post)} views
+                                             {post ? getViewCount(post) : 0} views
                                         </div>
                                    </div>
 
                                    <img
-                                        src={post.sourceUrl || DEFAULT_IMAGE}
-                                        alt={post.title}
+                                        src={post!.sourceUrl || DEFAULT_IMAGE}
+                                        alt={post!.title}
                                         onClick={() => setIsImageOpen(true)}
                                         className="w-full h-64 object-cover rounded-lg mb-8 cursor-pointer transition-transform hover:scale-105"
                                    />
@@ -211,7 +262,7 @@ export default function BlogDetail() {
                                                   Save
                                              </Button>
                                              {
-                                                  post.expertId === userId
+                                                  post!.expertId === userId
                                                        ?
                                                        <PostActions post={post} refetchPost={fetchPost} />
                                                        :
@@ -292,7 +343,7 @@ export default function BlogDetail() {
                          onClick={() => setIsImageOpen(false)}
                     >
                          <img
-                              src={post.sourceUrl || DEFAULT_IMAGE}
+                              src={post!.sourceUrl || DEFAULT_IMAGE}
                               alt="Full Size"
                               className="max-h-[90vh] max-w-[90vw] rounded shadow-lg"
                          />
