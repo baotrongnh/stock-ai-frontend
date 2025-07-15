@@ -1,5 +1,5 @@
 import axios from "axios"
-import axiosClient from "./axiosClient.ts"
+import axiosClient from "./axiosClient"
 
 const loginAdmin = async ({ username, password }: { username: string, password: string }) => {
      try {
