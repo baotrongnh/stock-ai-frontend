@@ -14,18 +14,18 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-// import { useNavigate } from "react-router"
+import { useNavigate } from "react-router"
 import NewsManagement from "./components/NewsManagement.tsx"
 import PodcastManagement from "./components/PodcastManagement.tsx"
 
 function AdminDashboardContent() {
     const [activeView, setActiveView] = useState("statistics")
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
 
     useEffect(() => {
         const token = localStorage.getItem("adminToken")
         if (!token) {
-            // navigate("/admin/login")
+            navigate("/admin/login")
         }
     }, [])
 
