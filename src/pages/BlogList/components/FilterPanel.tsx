@@ -283,7 +283,7 @@ export function FilterPanel({
                         <SelectItem value="newest">Newest first</SelectItem>
                         <SelectItem value="oldest">Oldest first</SelectItem>
                         <SelectItem value="most-viewed">Most viewed</SelectItem>
-                        <SelectItem value="most-liked">Most liked</SelectItem>
+                        <SelectItem value="most-liked">Most upvoted</SelectItem>
                     </SelectContent>
                 </Select>
             </div>

@@ -21,6 +21,7 @@ export default function Profile() {
           handleSave,
           handleCancel,
           handleInputChange,
+          handleFileChange,
           refetchProfile,
      } = useProfile()
 
@@ -66,6 +67,7 @@ export default function Profile() {
                          onSave={handleSave}
                          onCancel={handleCancel}
                          onRefresh={refetchProfile}
+                         onFileChange={handleFileChange}
                     />
                )}
 

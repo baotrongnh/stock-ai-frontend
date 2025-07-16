@@ -54,6 +54,34 @@ const deletePostById = async (id: number) => {
     return response.data
 }
 
+const votePost = async (id: number, voteType: "UPVOTE" | "DOWNVOTE") => {
+    const response = await axiosClient.post(`/posts/${id}/vote`, { voteType })
+    return response.data
+}
+
+const favoritePost = async (id: number) => {
+    try {
+        const response = await axiosClient.post(`/posts/${id}/favorite`, {}, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        return response.data
+    } catch (error) {
+        console.error(`Error favoriting post ${id}:`, error)
+        throw error
+    }
+}
+
+const unfavoritePost = async (id: number) => {
+    try {
+        const response = await axiosClient.delete(`/posts/${id}/favorite`)
+        return response.data
+    } catch (error) {
+        console.error(`Error unfavoriting post ${id}:`, error)
+        throw error
+    }
+}
 
 export const PostServices = {
     getPosts,
@@ -61,4 +89,7 @@ export const PostServices = {
     createPost,
     updatePostById,
     deletePostById,
+    votePost,
+    favoritePost,
+    unfavoritePost,
 }

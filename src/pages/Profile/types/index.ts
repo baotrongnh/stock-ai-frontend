@@ -5,6 +5,7 @@ export interface UserProfile {
     email: string
     fullName: string
     avatar: string
+    avatarFile?: File | null
     provider: string
     socialId: string
     status: number
