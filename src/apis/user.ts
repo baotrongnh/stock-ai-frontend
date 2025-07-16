@@ -24,13 +24,13 @@ const getUsers = async (page: number, pageSize: number) => {
     return response.data
 }
 
-const getUserById = async (id: number) => {
+const getUserById = async (id: number | string) => {
     const response = await axiosClient.get(`/users/${id}`)
     return response.data
 }
 
 const updateUser = async (
-    id: number,
+    id: number | string,
     updateData: UserPayload,
     file?: File
 ) => {
@@ -58,7 +58,7 @@ const updateUser = async (
     return response.data
 }
 
-const deleteUser = async (id: number) => {
+const deleteUser = async (id: number | string) => {
     const response = await axiosClient.delete(`/users/${id}`)
     return response.data
 }
