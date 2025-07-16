@@ -37,7 +37,7 @@ export function ComplaintsManagement() {
      const [loading, setLoading] = useState(false)
      const [searchTerm, setSearchTerm] = useState("")
      const [statusFilter, setStatusFilter] = useState("all")
-     const [blockingPostId, setBlockingPostId] = useState<number | null>(null)
+     const [blockingPostId] = useState<number | null>(null)
      const [deletingPostId, setDeletingPostId] = useState<number | null>(null)
      const [loadingDetail, setLoadingDetail] = useState(false)
      const [detailPost, setDetailPost] = useState<ReportedPost | null>(null)
