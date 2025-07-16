@@ -84,8 +84,8 @@ export function useBlogFilters() {
                     StockServices.getStocks(1, 1000)
                 ])
 
-                console.log('Posts API response:', postsResponse) // Debug log
-                console.log('Stocks API response:', stocksResponse) // Debug log
+                // console.log('Posts API response:', postsResponse) // Debug log
+                // console.log('Stocks API response:', stocksResponse) // Debug log
 
                 // Handle posts response - try multiple possible structures
                 let postsData = []
@@ -278,18 +278,18 @@ export function useBlogFilters() {
     })
 
     // Debug logging
-    console.log('Raw posts:', posts.length)
-    console.log('Filtered posts:', filteredPosts.length)
-    console.log('Current filters:', {
-        searchTerm,
-        selectedStock,
-        selectedSentiment,
-        selectedDate,
-        sortBy
-    })
-    if (posts.length > 0) {
-        console.log('Sample post structure:', posts[0])
-    }
+    // console.log('Raw posts:', posts.length)
+    // console.log('Filtered posts:', filteredPosts.length)
+    // console.log('Current filters:', {
+    //     searchTerm,
+    //     selectedStock,
+    //     selectedSentiment,
+    //     selectedDate,
+    //     sortBy
+    // })
+    // if (posts.length > 0) {
+    //     console.log('Sample post structure:', posts[0])
+    // }
 
     // Sort posts
     const sortedPosts = [...filteredPosts].sort((a, b) => {

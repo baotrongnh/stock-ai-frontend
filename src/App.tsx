@@ -1,27 +1,26 @@
-import { Route, Routes, useLocation } from 'react-router'
-import ProtectedRoute from './routes/ProtectedRoute'
 import { useEffect } from 'react'
-import './App.css'
-import Login from './pages/Login/Login.tsx'
-import Register from './pages/Register/Register.tsx'
-import Chat from './pages/Chat/Chat.tsx'
-import BlogList from './pages/BlogList/BlogList.tsx'
-import BlogDetail from './pages/BlogList/BlogDetail.tsx'
-import UserLayout from './layouts/UserLayout.tsx'
-import Podcast from './pages/Podcast/Podcast.tsx'
-import Profile from './pages/Profile/Profile.tsx'
-import AdminLayout from './layouts/AdminLayout.tsx'
-import AdminDashboard from './pages/Admin/AdminDashboard.tsx'
 import { Toaster } from 'react-hot-toast'
-import TempLogData from './pages/TempLogData.tsx'
+import { Route, Routes, useLocation } from 'react-router'
+import './App.css'
+import AdminLayout from './layouts/AdminLayout.tsx'
+import UserLayout from './layouts/UserLayout.tsx'
+import AdminDashboard from './pages/Admin/AdminDashboard.tsx'
 import AdminLogin from './pages/Admin/AdminLogin.tsx'
-import StockAILanding from './pages/Home/Home.tsx'
-import Features from './pages/Features/Features.tsx'
-import Solutions from './pages/Solutions/Solutions.tsx'
-import Pricing from './pages/Pricing/Pricing.tsx'
-import Resources from './pages/Resources/Resources.tsx'
+import BlogDetail from './pages/BlogList/BlogDetail.tsx'
+import BlogList from './pages/BlogList/BlogList.tsx'
+import Chat from './pages/Chat/Chat.tsx'
 import Contact from './pages/Contact/Contact.tsx'
+import Features from './pages/Features/Features.tsx'
+import StockAILanding from './pages/Home/Home.tsx'
 import RootLayout from './pages/Home/Layout.tsx'
+import Login from './pages/Login/Login.tsx'
+import Podcast from './pages/Podcast/Podcast.tsx'
+import Pricing from './pages/Pricing/Pricing.tsx'
+import Profile from './pages/Profile/Profile.tsx'
+import Register from './pages/Register/Register.tsx'
+import Resources from './pages/Resources/Resources.tsx'
+import Solutions from './pages/Solutions/Solutions.tsx'
+import ProtectedRoute from './routes/ProtectedRoute'
 
 function App() {
   const location = useLocation();
@@ -53,7 +52,6 @@ function App() {
         <Route path='/podcast' element={<ProtectedRoute><UserLayout><Podcast /></UserLayout></ProtectedRoute>} />
         <Route path='/profile' element={<ProtectedRoute><UserLayout><Profile /></UserLayout></ProtectedRoute>} />
         <Route path='/admin' element={<AdminLayout><AdminDashboard /></AdminLayout>} />
-        <Route path='/data' element={<ProtectedRoute><UserLayout><TempLogData /></UserLayout></ProtectedRoute>} />
       </Routes>
     </>
   )

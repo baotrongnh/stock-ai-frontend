@@ -1,11 +1,10 @@
+import { UserServices } from "@/apis/user"
 import { useEffect, useState } from "react"
+import { Toaster, toast } from "react-hot-toast"
 import { Link, useNavigate } from "react-router"
+import { login } from '../../apis/login'
 import logo from "../../assets/logo/logo.svg"
 import { GoogleButton } from "./components/GoogleButton.tsx"
-import { FacebookButton } from "./components/FacebookButton.tsx"
-import { login } from '../../apis/login'
-import { UserServices } from "@/apis/user"
-import { Toaster, toast } from "react-hot-toast"
 
 export default function Login() {
   const [email, setEmail] = useState("")
@@ -141,7 +140,7 @@ export default function Login() {
 
           <div className="flex justify-center gap-4 mb-4">
             <GoogleButton />
-            <FacebookButton />
+            {/* <FacebookButton /> */}
           </div>
 
           <div className="text-center text-gray-500">
