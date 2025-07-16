@@ -2,10 +2,19 @@
 import { useEffect } from 'react';
 import { loginGoogle } from '../../../apis/login';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-hot-toast';
+import { UserServices } from '@/apis/user';
 
 declare global {
     interface Window {
-        google?: any;
+        google?: {
+            accounts: {
+                id: {
+                    initialize: (config: unknown) => void;
+                    renderButton: (element: HTMLElement | null, config: unknown) => void;
+                };
+            };
+        };
     }
 }
 
@@ -16,7 +25,7 @@ interface JwtPayload {
     sub: string;
     picture: string;
     email: string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 function decodeJWT(token: string): JwtPayload {
@@ -35,19 +44,45 @@ function decodeJWT(token: string): JwtPayload {
 
 export const GoogleButton = () => {
     const navigate = useNavigate()
-    const sendToken = async (token: string) => {
-        try {
-            const response = await loginGoogle(token); // Gửi về backend
-            if (response.access_token) {
-                navigate('/');
-            }
-            console.log('Server response:', response);
-        } catch (error) {
-            console.error('Error sending token:', error);
-        }
-    };
 
     useEffect(() => {
+        const sendToken = async (token: string) => {
+            try {
+                const response = await loginGoogle(token);
+                console.log('Server response:', response);
+
+                if (response?.access_token && response?.user?.userId) {
+                    // Save tokens and user info to localStorage
+                    localStorage.setItem("userId", response.user.userId);
+                    localStorage.setItem("accessToken", response.access_token);
+                    localStorage.setItem("refreshToken", response.refresh_token);
+
+                    try {
+                        // Get user profile
+                        const userProfile = await UserServices.getUserById(response.user.userId);
+
+                        toast.success("Google login successful!");
+                        setTimeout(() => {
+                            navigate("/blog", { state: { user: userProfile.data } });
+                        }, 1000);
+                    } catch (profileError) {
+                        console.error("Error fetching user profile:", profileError);
+                        // Still navigate even if profile fetch fails
+                        toast.success("Google login successful!");
+                        setTimeout(() => {
+                            navigate("/blog");
+                        }, 1000);
+                    }
+                } else {
+                    toast.error("Google login failed");
+                    console.error("Invalid response structure:", response);
+                }
+            } catch (error) {
+                console.error('Error sending token:', error);
+                toast.error("Google login failed. Please try again.");
+            }
+        };
+
         const script = document.createElement('script');
         script.src = 'https://accounts.google.com/gsi/client';
         script.async = true;
@@ -83,7 +118,7 @@ export const GoogleButton = () => {
         return () => {
             document.body.removeChild(script);
         };
-    }, []);
+    }, [navigate]);
 
     return (
         <div id="google-button"></div>
