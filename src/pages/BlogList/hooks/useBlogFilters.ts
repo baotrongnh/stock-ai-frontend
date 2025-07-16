@@ -99,7 +99,7 @@ export function useBlogFilters() {
                     postsData = postsResponse
                 }
 
-                console.log('Processed posts data:', postsData) // Debug log
+                // console.log('Processed posts data:', postsData) // Debug log
                 setPosts(postsData)
 
                 // Handle stocks response - try multiple possible structures
@@ -114,7 +114,7 @@ export function useBlogFilters() {
                     stocksData = stocksResponse
                 }
 
-                console.log('Processed stocks data:', stocksData) // Debug log
+                // console.log('Processed stocks data:', stocksData) // Debug log
                 setStocks(stocksData)
             } catch (err) {
                 setError('Failed to fetch data')
