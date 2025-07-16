@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Minus, Clock, Eye, Heart } from "lucide-react"
 import { useNavigate } from "react-router"
+import { highlightText, highlightTextSubtle } from "../utils/highlightText"
 
 interface Post {
     postId: number
@@ -11,8 +12,17 @@ interface Post {
     sourceUrl?: string
     sentiment: string
     createdAt: string
-    postViews: number
-    likes: number
+    viewCount: number
+    likeCount: number
+    session: number
+    level: string
+    topic: string
+    status: string
+    expert: {
+        userId: string
+        fullName: string
+        avatarUrl?: string
+    }
     stocks: Array<{
         stockId: number
         symbol: string
@@ -22,9 +32,10 @@ interface Post {
 
 interface PostGridProps {
     posts: Post[]
+    searchTerm?: string
 }
 
-export function PostGrid({ posts }: PostGridProps) {
+export function PostGrid({ posts, searchTerm = "" }: PostGridProps) {
     const navigate = useNavigate()
 
     const handlePostClick = (postId: number) => {
@@ -74,8 +85,17 @@ export function PostGrid({ posts }: PostGridProps) {
     if (posts.length === 0) {
         return (
             <div className="text-center py-12 text-gray-500">
-                <p className="text-lg">No posts found matching your filters</p>
-                <p className="text-sm mt-2">Try adjusting your search criteria</p>
+                {searchTerm ? (
+                    <>
+                        <p className="text-lg">No posts found for "{searchTerm}"</p>
+                        <p className="text-sm mt-2">Try adjusting your search term or clear your filters</p>
+                    </>
+                ) : (
+                    <>
+                        <p className="text-lg">No posts found matching your filters</p>
+                        <p className="text-sm mt-2">Try adjusting your search criteria</p>
+                    </>
+                )}
             </div>
         )
     }
@@ -91,7 +111,7 @@ export function PostGrid({ posts }: PostGridProps) {
                     <CardHeader className="pb-3">
                         <div className="flex items-start justify-between gap-2">
                             <CardTitle className="text-lg leading-tight line-clamp-2">
-                                {post.title}
+                                {highlightText(post.title, searchTerm)}
                             </CardTitle>
                             <div className="flex items-center gap-1 flex-shrink-0">
                                 {getSentimentIcon(post.sentiment)}
@@ -124,7 +144,7 @@ export function PostGrid({ posts }: PostGridProps) {
                         )}
 
                         <p className="text-sm text-gray-600 line-clamp-3">
-                            {truncateContent(post.content)}
+                            {highlightTextSubtle(truncateContent(post.content), searchTerm)}
                         </p>
 
                         <div className="flex items-center justify-between text-xs text-gray-500">
@@ -135,11 +155,11 @@ export function PostGrid({ posts }: PostGridProps) {
                             <div className="flex items-center gap-3">
                                 <div className="flex items-center gap-1">
                                     <Eye className="h-3 w-3" />
-                                    {post.postViews || 0}
+                                    {post.viewCount || 0}
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <Heart className="h-3 w-3" />
-                                    {post.likes || 0}
+                                    {post.likeCount || 0}
                                 </div>
                             </div>
                         </div>

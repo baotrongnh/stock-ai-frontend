@@ -15,8 +15,8 @@ import {
   TrendingUp,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { formatText } from "../../utils/formatText.js";
+import { useState } from "react";
+import { formatText } from "../../utils/formatText";
 
 
 interface Message {
@@ -40,18 +40,11 @@ export default function StockAnalysisChat() {
       role: "assistant",
       content:
         "Hello! I'm your AI stock analysis assistant. I can help you analyze stocks, market trends, and provide investment insights. What would you like to know about today's market?",
-      timestamp: new Date(Date.now() - 300000), // 5 minutes ago
+      timestamp: new Date(Date.now() - 300000),
     },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [currentTime, setCurrentTime] = useState(new Date());
-
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
 
 
   const stockSuggestions = [
@@ -76,61 +69,6 @@ export default function StockAnalysisChat() {
       color: "from-orange-500 to-orange-600",
     },
   ];
-
-  // Mock responses for different queries
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getMockResponse = (
-    userMessage: string
-  ): { content: string; stockData?: any } => {
-    const message = userMessage.toLowerCase();
-
-    if (message.includes("aapl") || message.includes("apple")) {
-      return {
-        content:
-          "Here's my analysis of Apple Inc. (AAPL):\n\n📈 **Current Performance**: Apple is showing strong momentum with solid fundamentals. The stock has gained 2.34% today on high volume.\n\n🔍 **Key Metrics**:\n- P/E Ratio: 28.5\n- Market Cap: $2.8T\n- Revenue Growth: 8.2% YoY\n\n💡 **Investment Outlook**: Apple remains a strong long-term investment with its diversified product ecosystem and growing services revenue. The upcoming iPhone cycle and AI integration could drive further growth.",
-        stockData: {
-          symbol: "AAPL",
-          price: 175.43,
-          change: 2.34,
-          changePercent: 1.34,
-        },
-      };
-    }
-
-    if (message.includes("tech stocks") || message.includes("technology")) {
-      return {
-        content:
-          "🚀 **Top Tech Stocks to Watch:**\n\n1. **NVIDIA (NVDA)** - AI chip leader, strong growth potential\n2. **Microsoft (MSFT)** - Cloud computing dominance, AI integration\n3. **Apple (AAPL)** - Ecosystem strength, services growth\n4. **Google (GOOGL)** - Search monopoly, cloud expansion\n5. **Tesla (TSLA)** - EV market leader, energy storage\n\n💡 **Sector Outlook**: Tech sector remains attractive despite recent volatility. Focus on companies with strong AI capabilities and cloud infrastructure.",
-      };
-    }
-
-    if (message.includes("p/e ratio") || message.includes("pe ratio")) {
-      return {
-        content:
-          "📊 **P/E Ratio Explained:**\n\nThe Price-to-Earnings ratio is a key valuation metric that compares a company's stock price to its earnings per share.\n\n🔢 **Formula**: P/E = Stock Price ÷ Earnings Per Share\n\n📈 **What it tells us**:\n- **Low P/E**: Potentially undervalued or slow growth\n- **High P/E**: Growth expectations or overvaluation\n- **Industry comparison**: Compare within same sector\n\n💡 **Investment Tip**: Use P/E alongside other metrics like PEG ratio, debt levels, and growth prospects for better analysis.",
-      };
-    }
-
-    if (message.includes("market outlook") || message.includes("forecast")) {
-      return {
-        content:
-          "🔮 **Q4 2024 Market Outlook:**\n\n📈 **Positive Factors**:\n- Strong corporate earnings growth\n- Resilient consumer spending\n- AI technology adoption\n- Potential Fed rate cuts\n\n⚠️ **Risk Factors**:\n- Geopolitical tensions\n- Inflation concerns\n- Election uncertainty\n\n🎯 **Strategy**: Focus on quality companies with strong balance sheets. Consider defensive sectors alongside growth opportunities in tech and healthcare.",
-      };
-    }
-
-    // Default responses
-    const defaultResponses = [
-      "That's an interesting question about the market! Based on current trends, I'd recommend focusing on companies with strong fundamentals and growth potential. Would you like me to analyze any specific stocks?",
-      "Great question! The current market environment offers both opportunities and challenges. I suggest diversifying across sectors and focusing on long-term value creation. What specific area interests you most?",
-      "I can help you analyze that! The key is to look at both technical and fundamental indicators. Would you like me to break down any particular stock or sector for you?",
-      "Excellent point! Market analysis requires considering multiple factors including earnings, growth prospects, and market sentiment. What specific stocks or sectors would you like to explore?",
-    ];
-
-    return {
-      content:
-        defaultResponses[Math.floor(Math.random() * defaultResponses.length)],
-    };
-  };
 
   const handleSendMessage = async (messageText?: string) => {
     const messageToSend = messageText || input;
@@ -181,9 +119,7 @@ export default function StockAnalysisChat() {
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-gray-50 via-red-50/30 to-orange-50/20">
-      {/* Enhanced Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Floating Header */}
         <div className="bg-white/80 backdrop-blur-xl border-b border-red-100/50 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
@@ -269,9 +205,8 @@ export default function StockAnalysisChat() {
             messages.map((message) => (
               <div
                 key={message.id}
-                className={`flex gap-4 ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                className={`flex gap-4 ${message.role === "user" ? "justify-end" : "justify-start"
+                  }`}
               >
                 {message.role === "assistant" && (
                   <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg">
@@ -280,16 +215,14 @@ export default function StockAnalysisChat() {
                 )}
 
                 <div
-                  className={`max-w-2xl ${
-                    message.role === "user" ? "order-first" : ""
-                  }`}
+                  className={`max-w-2xl ${message.role === "user" ? "order-first" : ""
+                    }`}
                 >
                   <div
-                    className={`rounded-3xl p-6 shadow-lg ${
-                      message.role === "user"
-                        ? "bg-gradient-to-r from-red-500 to-red-600 text-white ml-auto"
-                        : "bg-white/80 backdrop-blur-sm border border-red-100/50 text-gray-900"
-                    }`}
+                    className={`rounded-3xl p-6 shadow-lg ${message.role === "user"
+                      ? "bg-gradient-to-r from-red-500 to-red-600 text-white ml-auto"
+                      : "bg-white/80 backdrop-blur-sm border border-red-100/50 text-gray-900"
+                      }`}
                   >
                     {/* Format answer using formatText utility */}
                     {formatText(message.content)
@@ -315,11 +248,10 @@ export default function StockAnalysisChat() {
                                 ${message.stockData.price}
                               </div>
                               <div
-                                className={`flex items-center gap-1 text-sm ${
-                                  message.stockData.change >= 0
-                                    ? "text-green-600"
-                                    : "text-red-600"
-                                }`}
+                                className={`flex items-center gap-1 text-sm ${message.stockData.change >= 0
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                                  }`}
                               >
                                 {message.stockData.change >= 0 ? (
                                   <TrendingUp className="w-4 h-4" />
@@ -340,9 +272,8 @@ export default function StockAnalysisChat() {
                   </div>
 
                   <div
-                    className={`text-xs text-gray-500 mt-2 ${
-                      message.role === "user" ? "text-right" : "text-left"
-                    }`}
+                    className={`text-xs text-gray-500 mt-2 ${message.role === "user" ? "text-right" : "text-left"
+                      }`}
                   >
                     {message.timestamp.toLocaleTimeString()}
                   </div>

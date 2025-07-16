@@ -15,6 +15,7 @@ import {
      Bell,
      Lock,
      Smartphone,
+     Zap,
 } from "lucide-react"
 
 export default function FeaturesPage() {

@@ -1,4 +1,4 @@
-import axiosClient from './AxiosClient'
+import axiosClient from "./axiosClient.ts"
 
 
 export const AIChat = (message: string) => {
