@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { TrendingUp, TrendingDown, Minus, Clock, Eye, Heart } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, Clock, Eye, ArrowUp } from "lucide-react"
 import { useNavigate } from "react-router"
 import { highlightText, highlightTextSubtle } from "../utils/highlightText"
 
@@ -14,6 +14,8 @@ interface Post {
     createdAt: string
     viewCount: number
     likeCount: number
+    upvoteCount: number
+    downvoteCount: number
     session: number
     level: string
     topic: string
@@ -158,8 +160,8 @@ export function PostGrid({ posts, searchTerm = "" }: PostGridProps) {
                                     {post.viewCount || 0}
                                 </div>
                                 <div className="flex items-center gap-1">
-                                    <Heart className="h-3 w-3" />
-                                    {post.likeCount || 0}
+                                    <ArrowUp className="h-3 w-3" />
+                                    {(post.upvoteCount || 0) - (post.downvoteCount || 0)}
                                 </div>
                             </div>
                         </div>

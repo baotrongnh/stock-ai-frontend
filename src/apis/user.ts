@@ -54,7 +54,7 @@ const updateUser = async (
             "Content-Type": "multipart/form-data",
         },
     })
-
+    console.log(response.data)
     return response.data
 }
 

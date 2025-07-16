@@ -54,19 +54,15 @@ export const PersonalInfoTab = ({
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            {isEditing ? (
-                                <Input
-                                    type="email"
-                                    value={editedProfile.email}
-                                    onChange={(e) => onInputChange("email", e.target.value)}
-                                    className="border-red-200 focus:border-red-500 focus:ring-red-500"
-                                />
-                            ) : (
-                                <p className="text-gray-900 py-3 text-lg flex items-center">
-                                    <Mail className="w-5 h-5 mr-3 text-gray-500" />
-                                    {profile.email}
-                                </p>
-                            )}
+                            <p className="text-gray-900 py-3 text-lg flex items-center">
+                                <Mail className="w-5 h-5 mr-3 text-gray-500" />
+                                {profile.email}
+                                {isEditing && (
+                                    <Badge className="ml-3 bg-gray-100 text-gray-600 hover:bg-gray-100">
+                                        Cannot be changed
+                                    </Badge>
+                                )}
+                            </p>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
