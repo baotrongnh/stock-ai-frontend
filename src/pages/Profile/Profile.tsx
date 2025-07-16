@@ -4,7 +4,10 @@ import {
      ProfileHeader,
      TabNavigation,
      PersonalInfoTab,
-     AccountDetailsTab
+     AccountDetailsTab,
+     ProfileSkeleton,
+     AccountDetailsSkeleton,
+     ProfileHeaderSkeleton
 } from "./components"
 
 export default function Profile() {
@@ -18,9 +21,21 @@ export default function Profile() {
           handleSave,
           handleCancel,
           handleInputChange,
+          refetchProfile,
      } = useProfile()
 
      const renderTabContent = () => {
+          if (isLoading) {
+               switch (activeTab) {
+                    case "personal":
+                         return <ProfileSkeleton />
+                    case "account":
+                         return <AccountDetailsSkeleton />
+                    default:
+                         return <ProfileSkeleton />
+               }
+          }
+
           switch (activeTab) {
                case "personal":
                     return (
@@ -40,14 +55,19 @@ export default function Profile() {
 
      return (
           <div className="h-screen bg-gradient-to-br from-gray-50 via-red-50/30 to-orange-50/20 flex flex-col overflow-hidden">
-               <ProfileHeader
-                    profile={profile}
-                    isEditing={isEditing}
-                    isLoading={isLoading}
-                    onEdit={() => setIsEditing(true)}
-                    onSave={handleSave}
-                    onCancel={handleCancel}
-               />
+               {isLoading ? (
+                    <ProfileHeaderSkeleton />
+               ) : (
+                    <ProfileHeader
+                         profile={profile}
+                         isEditing={isEditing}
+                         isLoading={isLoading}
+                         onEdit={() => setIsEditing(true)}
+                         onSave={handleSave}
+                         onCancel={handleCancel}
+                         onRefresh={refetchProfile}
+                    />
+               )}
 
                <div className="flex-1 p-6 pb-8 overflow-y-auto bg-gradient-to-br from-gray-50 via-red-50/30 to-orange-50/20">
                     <div className="max-w-4xl mx-auto">

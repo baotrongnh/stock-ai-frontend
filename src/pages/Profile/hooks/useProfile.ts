@@ -30,50 +30,26 @@ export const useProfile = () => {
         passwordHash: '',
     })
     const [isEditing, setIsEditing] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true) // Start with loading true
     const userId = localStorage.getItem("userId")
+
     // Load user profile from API
     useEffect(() => {
         const loadProfile = async () => {
-            
-            // const accessToken = localStorage.getItem("accessToken")
-            // const adminToken = localStorage.getItem("adminToken")
-
-            // console.log('=== Profile Loading Debug ===')
-            // console.log('userId:', userId)
-            // console.log('accessToken:', accessToken ? 'Present' : 'Not found')
-            // console.log('adminToken:', adminToken ? 'Present' : 'Not found')
-
             if (!userId) {
                 console.log('No userId found in localStorage')
                 toast.error('User ID not found. Please login again.')
+                setIsLoading(false)
                 return
             }
 
-            // console.log('Loading profile for userId:', userId)
             setIsLoading(true)
             try {
-                const res = await UserServices.getUserById(userId) // Use userId as string instead of Number(userId)
-                // console.log('=== API Response Debug ===')
-                // console.log('Full response:', res)
-                // console.log('Response data:', res?.data)
-                // console.log('Response error:', res?.error)
-                // console.log('Response message:', res?.message)
+                const res = await UserServices.getUserById(userId)
 
                 if (res && !res.error) {
                     if (res.data) {
                         const userData = res.data
-                        // console.log('Processing user data:', userData)
-                        // console.log('User ID:', userData.userId)
-                        // console.log('Full Name:', userData.fullName)
-                        // console.log('Email:', userData.email)
-                        // console.log('Avatar URL:', userData.avatarUrl)
-                        // console.log('Provider:', userData.provider)
-                        // console.log('Social ID:', userData.socialId)
-                        // console.log('Status:', userData.status)
-                        // console.log('Is Expert:', userData.isExpert)
-                        // console.log('Created At:', userData.createdAt)
-                        // console.log('Updated At:', userData.updatedAt)
 
                         setProfile((prev) => ({
                             ...prev,
@@ -98,12 +74,10 @@ export const useProfile = () => {
                             status: userData.status?.toString() || '',
                             passwordHash: userData.passwordHash || '',
                         })
-                        // console.log('Profile updated successfully')
                         toast.success('Profile loaded successfully!')
                     } else {
                         console.log('API returned success but no data - this might be expected for some endpoints')
                         console.log('Using default profile data')
-                        // Don't show error toast here, just use default data
                     }
                 } else {
                     console.log('API returned error:', res?.message)
@@ -119,6 +93,145 @@ export const useProfile = () => {
 
         loadProfile()
     }, [userId])
+
+    // Function to refetch profile
+    const refetchProfile = async () => {
+        if (!userId) return
+
+        setIsLoading(true)
+        try {
+            const res = await UserServices.getUserById(userId)
+
+            if (res && !res.error) {
+                if (res.data) {
+                    const userData = res.data
+
+                    setProfile((prev) => ({
+                        ...prev,
+                        userId: userData.userId || prev.userId,
+                        firstName: userData.fullName?.split(" ")[0] || prev.firstName,
+                        lastName: userData.fullName?.split(" ").slice(1).join(" ") || prev.lastName,
+                        fullName: userData.fullName || prev.fullName,
+                        email: userData.email || prev.email,
+                        avatar: userData.avatarUrl || prev.avatar,
+                        provider: userData.provider || prev.provider,
+                        socialId: userData.socialId || prev.socialId,
+                        status: userData.status || prev.status,
+                        isExpert: userData.isExpert || prev.isExpert,
+                        createdAt: userData.createdAt || prev.createdAt,
+                        updatedAt: userData.updatedAt || prev.updatedAt,
+                        refreshToken: userData.refreshToken || prev.refreshToken,
+                        joinDate: userData.createdAt ? new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : prev.joinDate,
+                    }))
+                    setUserBackendFields({
+                        provider: userData.provider || '',
+                        socialId: userData.socialId || '',
+                        status: userData.status?.toString() || '',
+                        passwordHash: userData.passwordHash || '',
+                    })
+                    toast.success('Profile refreshed successfully!')
+                } else {
+                    console.log('API returned success but no data')
+                }
+            } else {
+                console.log('API returned error:', res?.message)
+                toast.error(res?.message || 'Failed to refresh profile')
+            }
+        } catch (error) {
+            console.error('Error refreshing profile:', error)
+            toast.error('Failed to refresh profile')
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    // Remove the old loadProfile function and replace with the new one
+    // useEffect(() => {
+    //     const loadProfile = async () => {
+
+    //         // const accessToken = localStorage.getItem("accessToken")
+    //         // const adminToken = localStorage.getItem("adminToken")
+
+    //         // console.log('=== Profile Loading Debug ===')
+    //         // console.log('userId:', userId)
+    //         // console.log('accessToken:', accessToken ? 'Present' : 'Not found')
+    //         // console.log('adminToken:', adminToken ? 'Present' : 'Not found')
+
+    //         if (!userId) {
+    //             console.log('No userId found in localStorage')
+    //             toast.error('User ID not found. Please login again.')
+    //             return
+    //         }
+
+    //         // console.log('Loading profile for userId:', userId)
+    //         setIsLoading(true)
+    //         try {
+    //             const res = await UserServices.getUserById(userId) // Use userId as string instead of Number(userId)
+    //             // console.log('=== API Response Debug ===')
+    //             // console.log('Full response:', res)
+    //             // console.log('Response data:', res?.data)
+    //             // console.log('Response error:', res?.error)
+    //             // console.log('Response message:', res?.message)
+
+    //             if (res && !res.error) {
+    //                 if (res.data) {
+    //                     const userData = res.data
+    //                     // console.log('Processing user data:', userData)
+    //                     // console.log('User ID:', userData.userId)
+    //                     // console.log('Full Name:', userData.fullName)
+    //                     // console.log('Email:', userData.email)
+    //                     // console.log('Avatar URL:', userData.avatarUrl)
+    //                     // console.log('Provider:', userData.provider)
+    //                     // console.log('Social ID:', userData.socialId)
+    //                     // console.log('Status:', userData.status)
+    //                     // console.log('Is Expert:', userData.isExpert)
+    //                     // console.log('Created At:', userData.createdAt)
+    //                     // console.log('Updated At:', userData.updatedAt)
+
+    //                     setProfile((prev) => ({
+    //                         ...prev,
+    //                         userId: userData.userId || prev.userId,
+    //                         firstName: userData.fullName?.split(" ")[0] || prev.firstName,
+    //                         lastName: userData.fullName?.split(" ").slice(1).join(" ") || prev.lastName,
+    //                         fullName: userData.fullName || prev.fullName,
+    //                         email: userData.email || prev.email,
+    //                         avatar: userData.avatarUrl || prev.avatar,
+    //                         provider: userData.provider || prev.provider,
+    //                         socialId: userData.socialId || prev.socialId,
+    //                         status: userData.status || prev.status,
+    //                         isExpert: userData.isExpert || prev.isExpert,
+    //                         createdAt: userData.createdAt || prev.createdAt,
+    //                         updatedAt: userData.updatedAt || prev.updatedAt,
+    //                         refreshToken: userData.refreshToken || prev.refreshToken,
+    //                         joinDate: userData.createdAt ? new Date(userData.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : prev.joinDate,
+    //                     }))
+    //                     setUserBackendFields({
+    //                         provider: userData.provider || '',
+    //                         socialId: userData.socialId || '',
+    //                         status: userData.status?.toString() || '',
+    //                         passwordHash: userData.passwordHash || '',
+    //                     })
+    //                     // console.log('Profile updated successfully')
+    //                     toast.success('Profile loaded successfully!')
+    //                 } else {
+    //                     console.log('API returned success but no data - this might be expected for some endpoints')
+    //                     console.log('Using default profile data')
+    //                     // Don't show error toast here, just use default data
+    //                 }
+    //             } else {
+    //                 console.log('API returned error:', res?.message)
+    //                 toast.error(res?.message || 'Failed to load profile')
+    //             }
+    //         } catch (error) {
+    //             console.error('Error loading profile:', error)
+    //             toast.error('Failed to load profile')
+    //         } finally {
+    //             setIsLoading(false)
+    //         }
+    //     }
+
+    //     loadProfile()
+    // }, [userId])
 
     // Sync edited profile with main profile
     useEffect(() => {
@@ -190,5 +303,6 @@ export const useProfile = () => {
         handleSave,
         handleCancel,
         handleInputChange,
+        refetchProfile,
     }
 }
