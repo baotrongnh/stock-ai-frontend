@@ -1,0 +1,44 @@
+/* Custom styles for select components to fix transparency issues */
+
+.select-content {
+  background-color: white !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 9999;
+}
+
+.dark .select-content {
+  background-color: #1f2937 !important;
+  border-color: #374151;
+}
+
+/* Additional classes for Radix UI select components */
+[data-radix-select-content],
+[data-radix-select-viewport],
+[role="listbox"] {
+  background-color: white !important;
+  opacity: 1 !important;
+}
+
+.dark [data-radix-select-content],
+.dark [data-radix-select-viewport],
+.dark [role="listbox"] {
+  background-color: #1f2937 !important;
+}
+
+[role="option"] {
+  background-color: transparent !important;
+}
+
+[role="option"][data-highlighted],
+[role="option"]:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.dark [role="option"][data-highlighted],
+.dark [role="option"]:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
