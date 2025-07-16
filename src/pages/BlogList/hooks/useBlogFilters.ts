@@ -348,6 +348,8 @@ export function useBlogFilters() {
     return {
         // Data
         posts: paginatedPosts,
+        allPosts: posts, // Return all posts (unfiltered)
+        setPosts, // Expose the setPosts function
         stocks,
         loading,
         error,
