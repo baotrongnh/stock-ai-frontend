@@ -27,7 +27,7 @@ function AdminDashboardContent() {
         if (!token) {
             navigate("/admin/login")
         }
-    }, [])
+    }, [navigate])
 
     const renderContent = () => {
         switch (activeView) {
@@ -74,8 +74,8 @@ function AdminDashboardContent() {
                     <AdminSidebar activeView={activeView} setActiveView={setActiveView} />
                     <SidebarInset className="flex-1 w-full">
                         <header className="sticky top-0 z-10 flex h-16 w-full shrink-0 items-center gap-2 border-b border-red-200 px-6 bg-white shadow-sm">
-                            <SidebarTrigger className="-ml-1 text-red-600 hover:bg-red-100" />
-                            <Separator orientation="vertical" className="mr-2 h-4 bg-red-300" />
+                            <SidebarTrigger className="-ml-1 text-red-600 hover:bg-red-50" />
+                            <Separator orientation="vertical" className="mr-2 h-4 bg-red-200" />
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     <BreadcrumbItem className="hidden md:block">
@@ -91,7 +91,9 @@ function AdminDashboardContent() {
                             </Breadcrumb>
                         </header>
                         <main className="flex-1 w-full max-w-none p-6 bg-gradient-to-br from-red-50 to-white">
-                            <div className="w-full max-w-none">{renderContent()}</div>
+                            <div className="w-full max-w-none rounded-lg shadow-md bg-white p-4">
+                                {renderContent()}
+                            </div>
                         </main>
                     </SidebarInset>
                 </div>

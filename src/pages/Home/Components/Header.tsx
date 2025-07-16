@@ -55,13 +55,17 @@ export function Header() {
 
                          {/* Desktop Actions */}
                          <div className="hidden lg:flex items-center space-x-4">
-                              <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50 font-medium">
-                                   Sign In
-                              </Button>
-                              <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium">
-                                   Start Free Trial
-                                   <ArrowRight className="w-4 h-4 ml-2" />
-                              </Button>
+                              <Link to="/login">
+                                   <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50 font-medium">
+                                        Sign In
+                                   </Button>
+                              </Link>
+                              <Link to="/register">
+                                   <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium">
+                                        Start Free Trial
+                                        <ArrowRight className="w-4 h-4 ml-2" />
+                                   </Button>
+                              </Link>
                          </div>
 
                          {/* Mobile Menu Button */}

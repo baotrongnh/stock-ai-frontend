@@ -1,0 +1,88 @@
+/* Admin styles to override dark mode */
+.admin-login-page {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+
+  --primary: 346.8 77.2% 49.8%;
+  --primary-foreground: 355.7 100% 97.3%;
+
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+
+  --radius: 0.5rem;
+}
+
+/* Force light mode styles for inputs */
+.admin-login-input {
+  background-color: white !important;
+  color: #0f172a !important; /* slate-900 */
+  border-color: #f8dadb !important; /* light red border */
+}
+
+.admin-login-input::placeholder {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+.admin-login-input:focus {
+  border-color: #fda4af !important; /* red-300 */
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important; /* red focus ring */
+}
+
+/* Force light mode styles for buttons */
+.admin-login-button {
+  background-color: #ef4444 !important; /* red-500 */
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+.admin-login-button:hover {
+  background-color: #dc2626 !important; /* red-600 */
+}
+
+/* Card styles */
+.admin-login-card {
+  background-color: white !important;
+  border-color: #fecaca !important; /* red-200 */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+.admin-login-card-header {
+  background-color: white !important;
+}
+
+.admin-login-card-content {
+  background-color: white !important;
+}
+
+/* Text styles */
+.admin-login-title {
+  color: #7f1d1d !important; /* red-900 */
+}
+
+.admin-login-description {
+  color: #b91c1c !important; /* red-700 */
+}
+
+.admin-login-label {
+  color: #7f1d1d !important; /* red-900 */
+}

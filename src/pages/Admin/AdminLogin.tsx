@@ -11,6 +11,9 @@ import { loginAdmin } from "@/apis/admin"
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router"
 
+// Style overrides to ensure light mode even when dark mode is active in the system
+import "./admin-styles.css"
+
 export default function AdminLogin() {
      const navigate = useNavigate()
      const [formData, setFormData] = useState({
@@ -46,30 +49,30 @@ export default function AdminLogin() {
      }
 
      return (
-          <div className="min-h-screen w-full bg-gradient-to-br from-red-50 via-white to-red-100 flex items-center justify-center p-4">
+          <div className="min-h-screen w-full bg-gradient-to-br from-red-50 via-white to-red-100 flex items-center justify-center p-4 admin-login-page">
                <div className="w-full max-w-md">
-                    <Card className="border-red-200 shadow-xl bg-white">
-                         <CardHeader className="space-y-4 text-center">
+                    <Card className="border-red-200 shadow-xl bg-white admin-login-card">
+                         <CardHeader className="space-y-4 text-center bg-white admin-login-card-header">
                               <div className="mx-auto w-16 h-16 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center">
                                    <Shield className="h-8 w-8 text-white" />
                               </div>
                               <div>
-                                   <CardTitle className="text-2xl font-bold text-red-900">Admin Login</CardTitle>
-                                   <CardDescription className="text-red-700">Sign in to access the admin dashboard</CardDescription>
+                                   <CardTitle className="text-2xl font-bold text-red-900 admin-login-title">Admin Login</CardTitle>
+                                   <CardDescription className="text-red-700 admin-login-description">Sign in to access the admin dashboard</CardDescription>
                               </div>
                          </CardHeader>
 
-                         <CardContent>
+                         <CardContent className="bg-white admin-login-card-content">
                               <form onSubmit={handleLogin} className="space-y-4">
                                    {error && (
-                                        <Alert className="border-red-200 bg-red-50">
+                                        <Alert className="border-red-200 bg-red-50 text-red-800">
                                              <AlertCircle className="h-4 w-4 text-red-600" />
                                              <AlertDescription className="text-red-800">{error}</AlertDescription>
                                         </Alert>
                                    )}
 
                                    <div className="space-y-2">
-                                        <Label htmlFor="username" className="text-red-900 font-medium">
+                                        <Label htmlFor="username" className="text-red-900 font-medium admin-login-label">
                                              Username
                                         </Label>
                                         <Input
@@ -79,12 +82,12 @@ export default function AdminLogin() {
                                              value={formData.username}
                                              onChange={handleInputChange}
                                              required
-                                             className="border-red-200 focus:border-red-400 focus:ring-red-400"
+                                             className="border-red-200 focus:border-red-400 focus:ring-red-400 bg-white text-gray-900 admin-login-input"
                                         />
                                    </div>
 
                                    <div className="space-y-2">
-                                        <Label htmlFor="password" className="text-red-900 font-medium">
+                                        <Label htmlFor="password" className="text-red-900 font-medium admin-login-label">
                                              Password
                                         </Label>
                                         <div className="relative">
@@ -96,13 +99,13 @@ export default function AdminLogin() {
                                                   value={formData.password}
                                                   onChange={handleInputChange}
                                                   required
-                                                  className="border-red-200 focus:border-red-400 focus:ring-red-400 pr-10"
+                                                  className="border-red-200 focus:border-red-400 focus:ring-red-400 pr-10 bg-white text-gray-900 admin-login-input"
                                              />
                                              <Button
                                                   type="button"
                                                   variant="ghost"
                                                   size="sm"
-                                                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-red-600"
                                                   onClick={() => setShowPassword(!showPassword)}
                                              >
                                                   {showPassword ? (
@@ -117,7 +120,7 @@ export default function AdminLogin() {
                                    <Button
                                         type="submit"
                                         disabled={isLoading}
-                                        className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2"
+                                        className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 focus:ring-red-500 admin-login-button"
                                    >
                                         {isLoading ? "Signing in..." : "Sign In"}
                                    </Button>

@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { BarChart3, FileText, AlertTriangle, Shield, LogOut, User, Users } from "lucide-react"
 import { Mic, Newspaper } from "lucide-react" // Import icons for News and Podcast
+import { useNavigate } from "react-router"
 
 const navigationItems = [
      {
@@ -69,17 +70,12 @@ interface AdminSidebarProps {
 }
 
 export function AdminSidebar({ activeView, setActiveView }: AdminSidebarProps) {
+     const navigate = useNavigate()
 
      const handleLogout = () => {
-          // Clear authentication data
+
           localStorage.removeItem("adminToken")
-          localStorage.removeItem("adminUser")
-
-          console.log("LOGOUT - Admin session ended:", {
-               timestamp: new Date().toISOString(),
-          })
-
-          // Redirect to login page
+          navigate('/')
      }
 
      const getAdminUser = () => {
@@ -90,7 +86,7 @@ export function AdminSidebar({ activeView, setActiveView }: AdminSidebarProps) {
      const adminUser = getAdminUser()
 
      return (
-          <Sidebar className="border-r border-red-200 bg-white" collapsible="icon" variant="sidebar">
+          <Sidebar className="border-r border-red-200 bg-white shadow-sm" collapsible="icon" variant="sidebar">
                <SidebarHeader className="bg-gradient-to-b from-red-600 to-red-700 text-white border-b border-red-500">
                     <div className="flex items-center gap-2 px-4 py-3">
                          <Shield className="h-6 w-6 flex-shrink-0" />
@@ -138,14 +134,13 @@ export function AdminSidebar({ activeView, setActiveView }: AdminSidebarProps) {
                               onClick={handleLogout}
                               variant="outline"
                               size="sm"
-                              className="w-full border-red-300 text-red-700 hover:bg-red-100 hover:text-red-900 bg-transparent"
+                              className="w-full border-red-200 text-red-700 hover:bg-red-100 hover:text-red-900 bg-white"
                          >
                               <LogOut className="h-4 w-4 mr-2" />
                               Logout
                          </Button>
                     </div>
                </SidebarFooter>
-
                <SidebarRail />
           </Sidebar>
      )
