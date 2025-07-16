@@ -44,6 +44,9 @@ export default function AdminLogin() {
                localStorage.setItem('adminToken', res?.data.data.access_token)
                toast.success(res?.data.message)
                navigate('/admin')
+          } else {
+               setError(res?.data.message || "Login failed. Please check your credentials.")
+               toast.error(res?.data.message || "Login failed. Please try again.")
           }
           setIsLoading(false)
      }

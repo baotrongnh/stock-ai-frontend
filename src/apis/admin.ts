@@ -9,6 +9,15 @@ const loginAdmin = async ({ username, password }: { username: string, password: 
      }
 }
 
+const getUserStatistics = async () => {
+     try {
+          return await axiosClient.get('admin/users/statistics')
+     } catch (error) {
+          console.error("Error fetching user statistics:", error);
+          throw error;
+     }
+}
+
 const getAllUsers = async () => {
      try {
           return axiosClient.get('users')
@@ -86,4 +95,24 @@ const getDetailPost = async (id: string | number) => {
      }
 }
 
-export { getAllUsers, deleteUser, loginAdmin, getAllPosts, deletePost, getDetailPost, restorePost, restoreUser, getListDeletedUsers }
+const getReportedPosts = async () => {
+     try {
+          // Add a timestamp to prevent caching
+          const timestamp = new Date().getTime();
+          return await axiosClient.get(`admin/posts/reported?_t=${timestamp}`)
+     } catch (error) {
+          console.error("Error fetching reported posts:", error);
+          throw error;
+     }
+}
+
+const blockPost = async (id: string | number) => {
+     try {
+          return await axiosClient.patch(`admin/posts/${id}/block`)
+     } catch (error) {
+          console.error("Error blocking post:", error);
+          throw error;
+     }
+}
+
+export { getAllUsers, deleteUser, loginAdmin, getAllPosts, deletePost, getDetailPost, restorePost, restoreUser, getListDeletedUsers, getUserStatistics, getReportedPosts, blockPost }

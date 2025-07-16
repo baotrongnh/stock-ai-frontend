@@ -1,98 +1,67 @@
-"use client"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import {
-     Dialog,
-     DialogContent,
-     DialogDescription,
-     DialogHeader,
-     DialogTitle,
-     DialogTrigger,
-} from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, MoreHorizontal, Eye, CheckCircle, XCircle, Clock, AlertTriangle, User } from "lucide-react"
+import { Search, MoreHorizontal, Eye, CheckCircle, XCircle, Clock, AlertTriangle, Loader2, ShieldAlert } from "lucide-react"
+import { getReportedPosts, blockPost } from "@/apis/admin"
+import toast from "react-hot-toast"
 
-const mockComplaints = [
-     {
-          id: 1,
-          title: "Spam in Comments",
-          reporter: "John Doe",
-          reportedUser: "Jane Smith",
-          type: "spam",
-          status: "pending",
-          priority: "medium",
-          description: "This user continuously posts spam links in comments",
-          createdAt: "2024-01-15",
-          evidence: "Screenshots of spam comments",
-     },
-     {
-          id: 2,
-          title: "Inappropriate Content",
-          reporter: "Mike Johnson",
-          reportedUser: "Sarah Wilson",
-          type: "inappropriate",
-          status: "resolved",
-          priority: "high",
-          description: "Post contains content inappropriate for the community",
-          createdAt: "2024-01-14",
-          evidence: "Link to violating post",
-     },
-     {
-          id: 3,
-          title: "User Harassment",
-          reporter: "Tom Brown",
-          reportedUser: "Lisa Davis",
-          type: "harassment",
-          status: "investigating",
-          priority: "high",
-          description: "This user continuously posts negative comments and harasses others",
-          createdAt: "2024-01-13",
-          evidence: "List of harassing comments",
-     },
-     {
-          id: 4,
-          title: "Content Plagiarism",
-          reporter: "David Wilson",
-          reportedUser: "Emma Johnson",
-          type: "copyright",
-          status: "rejected",
-          priority: "low",
-          description: "Post copied from another source without attribution",
-          createdAt: "2024-01-12",
-          evidence: "Original and copied post links",
-     },
-     {
-          id: 5,
-          title: "Fake Account",
-          reporter: "Anna Smith",
-          reportedUser: "Fake Celebrity",
-          type: "fake_account",
-          status: "pending",
-          priority: "high",
-          description: "This account is impersonating a celebrity",
-          createdAt: "2024-01-11",
-          evidence: "Comparison of real and fake profiles",
-     },
-]
+// Define interface for reported posts from API
 
-// Logging functions
-const logUpdateAction = (id: number, newData: Record<string, unknown>) => {
-     console.log(`UPDATE ACTION - Complaint ID: ${id}`)
-     console.log("New Data:", newData)
+// Define interface for reported posts from API
+interface ReportedPost {
+     postId: number;
+     title: string;
+     content?: string;
+     createdAt: string;
+     level?: string;
+     sentiment?: string;
+     status: string;
+     topic?: string;
+     updatedAt?: string;
 }
 
 export function ComplaintsManagement() {
-     const [complaints, setComplaints] = useState(mockComplaints)
+     // We don't need to use mockComplaints anymore, focusing on the actual reported posts
+     const [reportedPosts, setReportedPosts] = useState<ReportedPost[]>([])
+     const [loading, setLoading] = useState(false)
      const [searchTerm, setSearchTerm] = useState("")
      const [statusFilter, setStatusFilter] = useState("all")
+     const [blockingPostId, setBlockingPostId] = useState<number | null>(null)
+
+     useEffect(() => {
+          fetchReportedPosts();
+     }, []);
+
+     const fetchReportedPosts = async () => {
+          setLoading(true);
+          try {
+               // Add a timestamp parameter to avoid caching
+               const timestamp = new Date().getTime();
+               const response = await getReportedPosts();
+               console.log(`Reported posts API response (${timestamp}):`, response.data);
+
+               if (response.data && response.data.data && response.data.data.posts) {
+                    setReportedPosts(response.data.data.posts);
+               } else {
+                    console.error("API response is not in the expected format:", response.data);
+               }
+          } catch (error) {
+               console.error("Failed to fetch reported posts:", error);
+               toast.error("Failed to load reported posts");
+          } finally {
+               setLoading(false);
+          }
+     };
 
      const getStatusBadge = (status: string) => {
+          // Normalize status to lowercase for comparison
+          const normalizedStatus = status.toLowerCase();
+
           const statusConfig = {
                pending: { label: "Pending", className: "bg-yellow-100 text-yellow-800 border-yellow-300", icon: Clock },
                investigating: { label: "Investigating", className: "bg-blue-100 text-blue-800 border-blue-300", icon: Eye },
@@ -103,7 +72,11 @@ export function ComplaintsManagement() {
                },
                rejected: { label: "Rejected", className: "bg-red-100 text-red-800 border-red-300", icon: XCircle },
           }
-          const config = statusConfig[status as keyof typeof statusConfig]
+
+          // Use normalized status for lookup
+          const config = statusConfig[normalizedStatus as keyof typeof statusConfig] ||
+               statusConfig['pending']; // Default to pending if not found
+
           const Icon = config.icon
           return (
                <Badge className={config.className}>
@@ -113,44 +86,51 @@ export function ComplaintsManagement() {
           )
      }
 
-     const getPriorityBadge = (priority: string) => {
-          const priorityConfig = {
-               low: { label: "Low", className: "bg-gray-100 text-gray-800 border-gray-300" },
-               medium: { label: "Medium", className: "bg-yellow-100 text-yellow-800 border-yellow-300" },
-               high: { label: "High", className: "bg-red-100 text-red-800 border-red-300" },
-          }
-          const config = priorityConfig[priority as keyof typeof priorityConfig]
-          return <Badge className={config.className}>{config.label}</Badge>
-     }
+     // Removed unused functions
 
-     const getTypeLabel = (type: string) => {
-          const typeLabels = {
-               spam: "Spam",
-               inappropriate: "Inappropriate Content",
-               harassment: "Harassment",
-               copyright: "Copyright Violation",
-               fake_account: "Fake Account",
-          }
-          return typeLabels[type as keyof typeof typeLabels] || type
-     }
+     const handleStatusChange = (itemId: number | string, newStatus: string) => {
+          // Handle reported posts (API data)
+          // In a real implementation, you would make an API call to update the status
+          // For now, just update the local state
+          const updatedPost = reportedPosts.find((post) => post.postId === itemId);
+          if (updatedPost) {
+               console.log(`Updating reported post ${itemId} status to ${newStatus.toUpperCase()}`);
+               // In a real implementation, make API call here to update the post status
 
-     const handleStatusChange = (complaintId: number, newStatus: string) => {
-          const updatedComplaint = complaints.find((complaint) => complaint.id === complaintId)
-          if (updatedComplaint) {
-               const newData = { ...updatedComplaint, status: newStatus }
-               logUpdateAction(complaintId, { status: newStatus })
-               setComplaints(complaints.map((complaint) => (complaint.id === complaintId ? newData : complaint)))
+               // Update local state - note we're storing status in UPPERCASE to match the API
+               setReportedPosts(
+                    reportedPosts.map((post) =>
+                         post.postId === itemId ? { ...post, status: newStatus.toUpperCase() } : post
+                    )
+               );
+
+               toast.success(`Post status updated to ${newStatus}`);
+          } else {
+               toast.error("Post not found");
           }
      }
 
-     const filteredComplaints = complaints.filter((complaint) => {
-          const matchesSearch =
-               complaint.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               complaint.reporter.toLowerCase().includes(searchTerm.toLowerCase()) ||
-               complaint.reportedUser.toLowerCase().includes(searchTerm.toLowerCase())
-          const matchesStatus = statusFilter === "all" || complaint.status === statusFilter
-          return matchesSearch && matchesStatus
-     })
+     const handleBlockPost = async (postId: number) => {
+          if (!postId) {
+               toast.error("Invalid post ID");
+               return;
+          }
+
+          setBlockingPostId(postId);
+          try {
+               await blockPost(postId);
+               // Refresh the reported posts list after blocking
+               await fetchReportedPosts();
+               toast.success("Post blocked successfully!");
+          } catch (error) {
+               console.error("Failed to block post:", error);
+               toast.error("Failed to block post. Please try again.");
+          } finally {
+               setBlockingPostId(null);
+          }
+     }
+
+     // Filtering is now done inline in the JSX
 
      return (
           <div className="w-full max-w-none space-y-6">
@@ -163,11 +143,11 @@ export function ComplaintsManagement() {
                <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-4">
                     <Card className="border-red-200 bg-white shadow-sm">
                          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                              <CardTitle className="text-sm font-medium text-red-900">Total Complaints</CardTitle>
+                              <CardTitle className="text-sm font-medium text-red-900">Total Reported Posts</CardTitle>
                               <AlertTriangle className="h-4 w-4 text-red-600" />
                          </CardHeader>
                          <CardContent>
-                              <div className="text-2xl font-bold text-red-900">{complaints.length}</div>
+                              <div className="text-2xl font-bold text-red-900">{reportedPosts.length}</div>
                          </CardContent>
                     </Card>
 
@@ -178,7 +158,7 @@ export function ComplaintsManagement() {
                          </CardHeader>
                          <CardContent>
                               <div className="text-2xl font-bold text-yellow-900">
-                                   {complaints.filter((c) => c.status === "pending").length}
+                                   {reportedPosts.filter((p) => p.status === "PENDING").length}
                               </div>
                          </CardContent>
                     </Card>
@@ -190,7 +170,7 @@ export function ComplaintsManagement() {
                          </CardHeader>
                          <CardContent>
                               <div className="text-2xl font-bold text-blue-900">
-                                   {complaints.filter((c) => c.status === "investigating").length}
+                                   {reportedPosts.filter((p) => p.status === "INVESTIGATING").length}
                               </div>
                          </CardContent>
                     </Card>
@@ -202,24 +182,24 @@ export function ComplaintsManagement() {
                          </CardHeader>
                          <CardContent>
                               <div className="text-2xl font-bold text-green-900">
-                                   {complaints.filter((c) => c.status === "resolved").length}
+                                   {reportedPosts.filter((p) => p.status === "RESOLVED").length}
                               </div>
                          </CardContent>
                     </Card>
                </div>
 
-               {/* Search and Filters */}
+               {/* Search and Filters for Reported Posts */}
                <Card className="w-full border-red-200 bg-white shadow-sm">
                     <CardHeader>
-                         <CardTitle className="text-red-900">All Complaints</CardTitle>
-                         <CardDescription className="text-red-700">Process and track user complaints</CardDescription>
+                         <CardTitle className="text-red-900">Search Reported Posts</CardTitle>
+                         <CardDescription className="text-red-700">Search and filter reported posts</CardDescription>
                     </CardHeader>
                     <CardContent>
                          <div className="flex items-center space-x-4 mb-6">
                               <div className="relative flex-1">
                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 h-4 w-4" />
                                    <Input
-                                        placeholder="Search complaints..."
+                                        placeholder="Search reported posts..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                         className="pl-10 border-red-200 focus:border-red-400"
@@ -231,153 +211,163 @@ export function ComplaintsManagement() {
                                    </SelectTrigger>
                                    <SelectContent>
                                         <SelectItem value="all">All Status</SelectItem>
-                                        <SelectItem value="pending">Pending</SelectItem>
-                                        <SelectItem value="investigating">Investigating</SelectItem>
-                                        <SelectItem value="resolved">Resolved</SelectItem>
-                                        <SelectItem value="rejected">Rejected</SelectItem>
+                                        <SelectItem value="PENDING">Pending</SelectItem>
+                                        <SelectItem value="INVESTIGATING">Investigating</SelectItem>
+                                        <SelectItem value="RESOLVED">Resolved</SelectItem>
+                                        <SelectItem value="REJECTED">Rejected</SelectItem>
                                    </SelectContent>
                               </Select>
                          </div>
 
-                         <div className="w-full rounded-md border border-red-200">
-                              <Table>
-                                   <TableHeader>
-                                        <TableRow className="bg-red-50">
-                                             <TableHead className="text-red-900">Title</TableHead>
-                                             <TableHead className="text-red-900">Reporter</TableHead>
-                                             <TableHead className="text-red-900">Reported User</TableHead>
-                                             <TableHead className="text-red-900">Type</TableHead>
-                                             <TableHead className="text-red-900">Priority</TableHead>
-                                             <TableHead className="text-red-900">Status</TableHead>
-                                             <TableHead className="text-red-900">Created</TableHead>
-                                             <TableHead className="text-red-900">Actions</TableHead>
-                                        </TableRow>
-                                   </TableHeader>
-                                   <TableBody>
-                                        {filteredComplaints.map((complaint) => (
-                                             <TableRow key={complaint.id} className="hover:bg-red-50">
-                                                  <TableCell className="font-medium text-red-900 max-w-xs truncate">{complaint.title}</TableCell>
-                                                  <TableCell className="text-red-800">
-                                                       <div className="flex items-center">
-                                                            <User className="w-4 h-4 mr-2 text-red-600" />
-                                                            {complaint.reporter}
-                                                       </div>
-                                                  </TableCell>
-                                                  <TableCell className="text-red-800">
-                                                       <div className="flex items-center">
-                                                            <User className="w-4 h-4 mr-2 text-red-600" />
-                                                            {complaint.reportedUser}
-                                                       </div>
-                                                  </TableCell>
-                                                  <TableCell className="text-red-800">{getTypeLabel(complaint.type)}</TableCell>
-                                                  <TableCell>{getPriorityBadge(complaint.priority)}</TableCell>
-                                                  <TableCell>{getStatusBadge(complaint.status)}</TableCell>
-                                                  <TableCell className="text-red-800">{complaint.createdAt}</TableCell>
-                                                  <TableCell>
-                                                       <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                 <Button variant="ghost" className="h-8 w-8 p-0 hover:bg-red-100">
-                                                                      <MoreHorizontal className="h-4 w-4 text-red-600" />
-                                                                 </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end" className="border-red-200">
-                                                                 <Dialog>
-                                                                      <DialogTrigger asChild>
-                                                                           <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                                                                <Eye className="mr-2 h-4 w-4" />
-                                                                                View Details
-                                                                           </DropdownMenuItem>
-                                                                      </DialogTrigger>
-                                                                      <DialogContent className="border-red-200 max-w-2xl">
-                                                                           <DialogHeader>
-                                                                                <DialogTitle className="text-red-900">Complaint Details</DialogTitle>
-                                                                                <DialogDescription className="text-red-700">
-                                                                                     Detailed information about the complaint
-                                                                                </DialogDescription>
-                                                                           </DialogHeader>
-                                                                           <div className="space-y-4">
-                                                                                <div className="grid grid-cols-2 gap-4">
-                                                                                     <div>
-                                                                                          <label className="text-sm font-medium text-red-900">Reporter:</label>
-                                                                                          <p className="text-red-800">{complaint.reporter}</p>
-                                                                                     </div>
-                                                                                     <div>
-                                                                                          <label className="text-sm font-medium text-red-900">Reported User:</label>
-                                                                                          <p className="text-red-800">{complaint.reportedUser}</p>
-                                                                                     </div>
-                                                                                </div>
-                                                                                <div className="grid grid-cols-2 gap-4">
-                                                                                     <div>
-                                                                                          <label className="text-sm font-medium text-red-900">Violation Type:</label>
-                                                                                          <p className="text-red-800">{getTypeLabel(complaint.type)}</p>
-                                                                                     </div>
-                                                                                     <div>
-                                                                                          <label className="text-sm font-medium text-red-900">Priority Level:</label>
-                                                                                          <div className="mt-1">{getPriorityBadge(complaint.priority)}</div>
-                                                                                     </div>
-                                                                                </div>
-                                                                                <div>
-                                                                                     <label className="text-sm font-medium text-red-900">Description:</label>
-                                                                                     <p className="text-red-800 text-sm mt-1">{complaint.description}</p>
-                                                                                </div>
-                                                                                <div>
-                                                                                     <label className="text-sm font-medium text-red-900">Evidence:</label>
-                                                                                     <p className="text-red-800 text-sm mt-1">{complaint.evidence}</p>
-                                                                                </div>
-                                                                                <div className="flex space-x-2 pt-4">
-                                                                                     <Button
-                                                                                          onClick={() => handleStatusChange(complaint.id, "investigating")}
-                                                                                          className="bg-blue-600 hover:bg-blue-700"
-                                                                                     >
-                                                                                          Start Investigation
-                                                                                     </Button>
-                                                                                     <Button
-                                                                                          onClick={() => handleStatusChange(complaint.id, "resolved")}
-                                                                                          className="bg-green-600 hover:bg-green-700"
-                                                                                     >
-                                                                                          Mark Resolved
-                                                                                     </Button>
-                                                                                     <Button
-                                                                                          onClick={() => handleStatusChange(complaint.id, "rejected")}
-                                                                                          variant="outline"
-                                                                                          className="border-red-300 text-red-700 hover:bg-red-50"
-                                                                                     >
-                                                                                          Reject
-                                                                                     </Button>
-                                                                                </div>
-                                                                           </div>
-                                                                      </DialogContent>
-                                                                 </Dialog>
+                         <Button
+                              onClick={() => fetchReportedPosts()}
+                              variant="outline"
+                              className="mb-4 border-red-200 text-red-900 hover:bg-red-50"
+                         >
+                              <Loader2 className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                              Refresh Posts
+                         </Button>
+                    </CardContent>
+               </Card>
 
-                                                                 {complaint.status === "pending" && (
-                                                                      <DropdownMenuItem onClick={() => handleStatusChange(complaint.id, "investigating")}>
-                                                                           <Eye className="mr-2 h-4 w-4 text-blue-600" />
-                                                                           Start Investigation
-                                                                      </DropdownMenuItem>
-                                                                 )}
-
-                                                                 {complaint.status === "investigating" && (
-                                                                      <DropdownMenuItem onClick={() => handleStatusChange(complaint.id, "resolved")}>
-                                                                           <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
-                                                                           Mark as Resolved
-                                                                      </DropdownMenuItem>
-                                                                 )}
-
-                                                                 <DropdownMenuItem
-                                                                      onClick={() => handleStatusChange(complaint.id, "rejected")}
-                                                                      className="text-red-600 focus:text-red-600"
-                                                                 >
-                                                                      <XCircle className="mr-2 h-4 w-4" />
-                                                                      Reject Complaint
-                                                                 </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                       </DropdownMenu>
-                                                  </TableCell>
-                                             </TableRow>
-                                        ))}
-                                   </TableBody>
-                              </Table>
+               {/* Reported Posts */}
+               <Card className="w-full border-red-200 bg-white shadow-sm">
+                    <CardHeader className="flex flex-row items-center justify-between">
+                         <div>
+                              <CardTitle className="text-red-900">Reported Posts</CardTitle>
+                              <CardDescription className="text-red-700">Review posts reported by users</CardDescription>
                          </div>
+                         <Button
+                              onClick={() => fetchReportedPosts()}
+                              variant="outline"
+                              size="sm"
+                              className="border-red-200 text-red-900 hover:bg-red-50"
+                              disabled={loading}
+                         >
+                              <Loader2 className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                              Refresh
+                         </Button>
+                    </CardHeader>
+                    <CardContent>
+                         {loading ? (
+                              <div className="flex justify-center items-center py-8">
+                                   <Loader2 className="animate-spin h-8 w-8 text-red-600 mr-2" />
+                                   <p className="text-red-800 font-medium">Loading reported posts...</p>
+                              </div>
+                         ) : (
+                              <div className="w-full rounded-md border border-red-200">
+                                   {reportedPosts && reportedPosts.length > 0 ? (
+                                        <Table>
+                                             <TableHeader>
+                                                  <TableRow className="bg-red-50">
+                                                       <TableHead className="text-red-900">Post Title</TableHead>
+                                                       <TableHead className="text-red-900">Content</TableHead>
+                                                       <TableHead className="text-red-900">Topic</TableHead>
+                                                       <TableHead className="text-red-900">Status</TableHead>
+                                                       <TableHead className="text-red-900">Created At</TableHead>
+                                                       <TableHead className="text-red-900">Actions</TableHead>
+                                                  </TableRow>
+                                             </TableHeader>
+                                             <TableBody>
+                                                  {reportedPosts
+                                                       .filter(post => {
+                                                            const matchesSearch = searchTerm === "" ||
+                                                                 post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                                 (post.content || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                                                 (post.topic || '').toLowerCase().includes(searchTerm.toLowerCase());
+
+                                                            const matchesStatus = statusFilter === "all" || post.status === statusFilter;
+                                                            return matchesSearch && matchesStatus;
+                                                       })
+                                                       .map((post) => (
+                                                            <TableRow key={post.postId} className="hover:bg-red-50">
+                                                                 <TableCell className="font-medium text-red-900 max-w-xs truncate">
+                                                                      {post.title}
+                                                                 </TableCell>
+                                                                 <TableCell className="text-red-800 max-w-xs truncate">
+                                                                      {post.content?.substring(0, 50) || 'No content'}
+                                                                      {post.content && post.content.length > 50 ? '...' : ''}
+                                                                 </TableCell>
+                                                                 <TableCell className="text-red-800">
+                                                                      {post.topic || 'N/A'}
+                                                                 </TableCell>
+                                                                 <TableCell>{getStatusBadge(post.status || 'PENDING')}</TableCell>
+                                                                 <TableCell className="text-red-800">
+                                                                      {new Date(post.createdAt).toLocaleDateString()}
+                                                                 </TableCell>
+                                                                 <TableCell>
+                                                                      <DropdownMenu>
+                                                                           <DropdownMenuTrigger asChild>
+                                                                                <Button variant="ghost" className="h-8 w-8 p-0" disabled={blockingPostId === post.postId}>
+                                                                                     {blockingPostId === post.postId ? (
+                                                                                          <Loader2 className="h-4 w-4 animate-spin" />
+                                                                                     ) : (
+                                                                                          <MoreHorizontal className="h-4 w-4" />
+                                                                                     )}
+                                                                                </Button>
+                                                                           </DropdownMenuTrigger>
+                                                                           <DropdownMenuContent align="end">
+                                                                                <DropdownMenuItem
+                                                                                     onClick={() => {
+                                                                                          // Prevent error by checking if the postId exists
+                                                                                          if (post.postId) {
+                                                                                               window.open(`/posts/${post.postId}`, '_blank');
+                                                                                          } else {
+                                                                                               toast.error("Post ID not found");
+                                                                                          }
+                                                                                     }}
+                                                                                >
+                                                                                     <Eye className="mr-2 h-4 w-4" />
+                                                                                     View Post
+                                                                                </DropdownMenuItem>
+                                                                                <DropdownMenuItem
+                                                                                     onClick={() => {
+                                                                                          handleStatusChange(post.postId, 'INVESTIGATING');
+                                                                                          toast.success("Post marked as investigating");
+                                                                                     }}
+                                                                                >
+                                                                                     <Eye className="mr-2 h-4 w-4" />
+                                                                                     Mark as Investigating
+                                                                                </DropdownMenuItem>
+                                                                                <DropdownMenuItem
+                                                                                     onClick={() => {
+                                                                                          handleStatusChange(post.postId, 'RESOLVED');
+                                                                                          toast.success("Post marked as resolved");
+                                                                                     }}
+                                                                                >
+                                                                                     <CheckCircle className="mr-2 h-4 w-4" />
+                                                                                     Mark as Resolved
+                                                                                </DropdownMenuItem>
+                                                                                <DropdownMenuItem
+                                                                                     onClick={() => {
+                                                                                          handleStatusChange(post.postId, 'REJECTED');
+                                                                                          toast.success("Post report rejected");
+                                                                                     }}
+                                                                                >
+                                                                                     <XCircle className="mr-2 h-4 w-4" />
+                                                                                     Reject Report
+                                                                                </DropdownMenuItem>
+                                                                                <DropdownMenuItem
+                                                                                     onClick={() => handleBlockPost(post.postId)}
+                                                                                     className="text-red-600 focus:text-red-600"
+                                                                                >
+                                                                                     <ShieldAlert className="mr-2 h-4 w-4" />
+                                                                                     Block Post
+                                                                                </DropdownMenuItem>
+                                                                           </DropdownMenuContent>
+                                                                      </DropdownMenu>
+                                                                 </TableCell>
+                                                            </TableRow>
+                                                       ))}
+                                             </TableBody>
+                                        </Table>
+                                   ) : (
+                                        <div className="py-8 text-center">
+                                             <p className="text-red-700">No reported posts found.</p>
+                                        </div>
+                                   )}
+                              </div>
+                         )}
                     </CardContent>
                </Card>
           </div>
