@@ -74,7 +74,7 @@ export const useProfile = () => {
                             status: userData.status?.toString() || '',
                             passwordHash: userData.passwordHash || '',
                         })
-                        toast.success('Profile loaded successfully!')
+                        // toast.success('Profile loaded successfully!')
                     } else {
                         console.log('API returned success but no data - this might be expected for some endpoints')
                         console.log('Using default profile data')
@@ -246,16 +246,18 @@ export const useProfile = () => {
         setIsLoading(true)
 
         try {
+            // Always use the original email since it's not editable
             const res = await UserServices.updateUser(
                 userId, // Use userId as string instead of Number(userId)
                 {
-                    email: editedProfile.email,
+                    email: profile.email, // Use original email, not editedProfile.email
                     passwordHash: userBackendFields.passwordHash || '',
                     fullName,
                     provider: userBackendFields.provider,
                     socialId: userBackendFields.socialId,
                     status: userBackendFields.status,
-                }
+                },
+                editedProfile.avatarFile || undefined
             )
 
             if (res.error === true) {
@@ -286,6 +288,34 @@ export const useProfile = () => {
         setIsEditing(false)
     }
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const file = e.target.files[0]
+
+            // Check file size (9MB limit)
+            const MAX_FILE_SIZE = 9 * 1024 * 1024; // 9MB in bytes
+            if (file.size > MAX_FILE_SIZE) {
+                toast.error('Image size must be less than 9MB. Please select a smaller image.')
+                // Reset the file input
+                e.target.value = '';
+                return;
+            }
+
+            // Preview the image
+            const reader = new FileReader()
+            reader.onload = () => {
+                setEditedProfile(prev => ({
+                    ...prev,
+                    avatar: reader.result as string,
+                    avatarFile: file
+                }))
+            }
+            reader.readAsDataURL(file)
+
+            toast.success('Avatar selected! Click Save to update your profile.')
+        }
+    }
+
     const handleInputChange = (field: keyof UserProfile, value: string | number | boolean) => {
         setEditedProfile((prev) => ({
             ...prev,
@@ -303,6 +333,7 @@ export const useProfile = () => {
         handleSave,
         handleCancel,
         handleInputChange,
+        handleFileChange,
         refetchProfile,
     }
 }

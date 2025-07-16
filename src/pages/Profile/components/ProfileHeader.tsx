@@ -20,6 +20,7 @@ interface ProfileHeaderProps {
     onSave: () => void
     onCancel: () => void
     onRefresh?: () => void
+    onFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export const ProfileHeader = ({
@@ -29,6 +30,7 @@ export const ProfileHeader = ({
     onEdit,
     onSave,
     onCancel,
+    onFileChange,
 }: ProfileHeaderProps) => {
     return (
         <div className="bg-white border-b border-gray-200">
@@ -51,16 +53,24 @@ export const ProfileHeader = ({
             <div className="px-12 py-6 bg-white">
                 <div className="flex items-start space-x-6">
                     {/* Avatar */}
-                    <div className="">
+                    <div className="relative">
                         <img
                             src={profile.avatar || "https://tse4.mm.bing.net/th/id/OIP.0YMbH3u3Nq7TumFaeRiU3gHaHk?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"}
                             alt="Profile"
                             className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-xl"
                         />
                         {isEditing && (
-                            <button className="absolute bottom-0 right-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors shadow-lg">
+                            <label htmlFor="avatar-upload" className="absolute bottom-0 right-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors shadow-lg cursor-pointer">
                                 <Camera className="w-4 h-4" />
-                            </button>
+                                <input
+                                    type="file"
+                                    id="avatar-upload"
+                                    name="avatar"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => onFileChange && onFileChange(e)}
+                                />
+                            </label>
                         )}
                     </div>
 
@@ -112,14 +122,25 @@ export const ProfileHeader = ({
                                         Refresh
                                     </Button>
                                 )} */}
-                                <Button
-                                    onClick={onEdit}
-                                    disabled={isLoading}
-                                    className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl px-6"
-                                >
-                                    <Edit3 className="w-4 h-4 mr-2" />
-                                    Edit Profile
-                                </Button>
+                                {profile.provider !== 'google' ? (
+                                    <Button
+                                        onClick={onEdit}
+                                        disabled={isLoading}
+                                        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl px-6"
+                                    >
+                                        <Edit3 className="w-4 h-4 mr-2" />
+                                        Edit Profile
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        disabled={true}
+                                        className="bg-gray-300 text-gray-600 rounded-xl px-6 cursor-not-allowed"
+                                        title="Google account profiles cannot be edited"
+                                    >
+                                        <Edit3 className="w-4 h-4 mr-2" />
+                                        Cannot Edit Google Profile
+                                    </Button>
+                                )}
                             </div>
                         ) : (
                             <div className="flex gap-2">

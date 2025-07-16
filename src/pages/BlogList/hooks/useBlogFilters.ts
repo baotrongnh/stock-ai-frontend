@@ -12,6 +12,8 @@ interface Post {
     createdAt: string
     viewCount: number
     likeCount: number
+    upvoteCount: number
+    downvoteCount: number
     session: number
     level: string
     topic: string
@@ -301,7 +303,7 @@ export function useBlogFilters() {
             case 'most-viewed':
                 return (b.viewCount || 0) - (a.viewCount || 0)
             case 'most-liked':
-                return (b.likeCount || 0) - (a.likeCount || 0)
+                return ((b.upvoteCount || 0) - (b.downvoteCount || 0)) - ((a.upvoteCount || 0) - (a.downvoteCount || 0))
             default:
                 return 0
         }
