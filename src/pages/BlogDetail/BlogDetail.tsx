@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useLocation } from "react-router";
 import type { Post, Comment } from "./types";
 import { PostHeader } from "./components/PostHeader";
 import { PostFooter } from "./components/PostFooter";
@@ -14,6 +14,7 @@ const DEFAULT_IMAGE = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7tw
 
 export default function BlogDetail() {
     const { id } = useParams();
+    const location = useLocation();
     const [post, setPost] = useState<Post | null>(null);
     const [loading, setLoading] = useState(true);
     const [newComment, setNewComment] = useState("");
@@ -356,10 +357,10 @@ export default function BlogDetail() {
                 {/* Header */}
                 <div className="bg-white border-b border-gray-200 p-6">
                     <div className="flex items-center gap-4 mb-4">
-                        <Link to="/blog">
+                        <Link to={location.state?.from || "/blog"}>
                             <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50">
                                 <ArrowLeft className="w-4 h-4 mr-2" />
-                                Back to Blog
+                                Back
                             </Button>
                         </Link>
                     </div>

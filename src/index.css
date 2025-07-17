@@ -5,9 +5,9 @@
     --radius: 0.625rem;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
+    --card: oklch(1 0 0 / 100%);
     --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
+    --popover: oklch(1 0 0 / 100%);
     --popover-foreground: oklch(0.145 0 0);
     --primary: oklch(0.205 0 0);
     --primary-foreground: oklch(0.985 0 0);
@@ -39,9 +39,9 @@
   .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
+    --card: oklch(0.205 0 0 / 100%);
     --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
+    --popover: oklch(0.205 0 0 / 100%);
     --popover-foreground: oklch(0.985 0 0);
     --primary: oklch(0.922 0 0);
     --primary-foreground: oklch(0.205 0 0);
@@ -53,7 +53,7 @@
     --accent-foreground: oklch(0.985 0 0);
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
+    --input: oklch(0.25 0 0 / 100%);
     --ring: oklch(0.556 0 0);
     --chart-1: oklch(0.488 0.243 264.376);
     --chart-2: oklch(0.696 0.17 162.48);
@@ -89,5 +89,71 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* Fix for modal and select transparency issues */
+  .dialog-content,
+  .popover-content,
+  .dropdown-menu,
+  .select-content,
+  .sheet-content,
+  [data-radix-popper-content-wrapper] > div,
+  [role="listbox"],
+  div[cmdk-list-element],
+  div[cmdk-root] {
+    background-color: var(--popover) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /* Specific fix for Shadcn UI Select component */
+  [role="listbox"] {
+    background-color: var(--popover) !important;
+    opacity: 1 !important;
+  }
+
+  /* Target select items */
+  [role="option"] {
+    background-color: var(--popover) !important;
+    opacity: 1 !important;
+  }
+
+  /* Target active select items */
+  [role="option"][data-highlighted],
+  [role="option"]:hover {
+    background-color: var(--accent) !important;
+  }
+
+  /* Additional fixes for select menus and popovers */
+  .select__menu,
+  .select__menu-list,
+  .select__option,
+  .select__control,
+  .select__value-container,
+  [data-radix-select-content],
+  [data-radix-select-viewport],
+  [data-radix-popper-content],
+  .shadcn-ui-select-content,
+  .radix-select-content,
+  .radix-select-viewport {
+    background-color: var(--popover) !important;
+    opacity: 1 !important;
+  }
+
+  /* Ensure the entire select dropdown is visible */
+  .select__dropdown-indicator,
+  .select__indicators {
+    background-color: var(--popover) !important;
+    opacity: 1 !important;
+  }
+
+  /* Calendar popup fix */
+  .calendar-popup,
+  .date-picker-popup,
+  [role="dialog"],
+  [role="tooltip"],
+  [role="menu"] {
+    background-color: var(--popover) !important;
+    opacity: 1 !important;
   }
 }

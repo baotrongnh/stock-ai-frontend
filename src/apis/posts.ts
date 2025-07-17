@@ -15,15 +15,53 @@ const createPost = async (
     content: string,
     stockId: number,
     file?: File) => {
-    const formData = new FormData()
+    try {
+        console.log('Creating post with data:', { title, content, stockId, hasFile: !!file })
 
-    formData.append('title', title)
-    if (content) formData.append('content', content)
-    if (stockId !== undefined) formData.append('stockId', stockId.toString())
-    if (file) formData.append('file', file)
+        const formData = new FormData()
+        formData.append('title', title)
+        if (content) formData.append('content', content)
+        if (stockId !== undefined) formData.append('stockId', stockId.toString())
+        if (file) formData.append('file', file)
 
-    const response = await axiosClient.post("/posts", formData)
-    return response.data
+        console.log('FormData created, sending request to /posts')
+
+        // Add specific configuration to detect and debug redirects
+        const response = await axiosClient.post("/posts", formData, {
+            validateStatus: function (status) {
+                // Accept all status codes to see what's happening
+                console.log('Received status code:', status)
+                return true
+            },
+            // Prevent browser from following redirects
+            maxRedirects: 0
+        })
+
+        console.log('Post creation complete. Response status:', response.status)
+        console.log('Response data:', response.data)
+        console.log('Response headers:', response.headers)
+
+        // Check if there's a location header that might be causing a redirect
+        if (response.headers.location) {
+            console.warn('REDIRECT DETECTED! Location header found:', response.headers.location)
+        }
+
+        // Check for redirect status codes
+        if (response.status >= 300 && response.status < 400) {
+            console.warn('REDIRECT STATUS CODE DETECTED:', response.status)
+            // Return the data without following the redirect
+            return {
+                saved: true,
+                redirectDetected: true,
+                message: 'Post created successfully, but redirect was detected'
+            }
+        }
+
+        return response.data
+    } catch (error) {
+        console.error('Error creating post:', error)
+        throw error
+    }
 }
 
 const getPostById = async (id: number) => {

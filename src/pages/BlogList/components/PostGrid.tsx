@@ -107,7 +107,7 @@ export function PostGrid({ posts, searchTerm = "" }: PostGridProps) {
             {posts.map((post) => (
                 <Card
                     key={post.postId}
-                    className="hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+                    className="hover:shadow-lg transition-shadow duration-200 cursor-pointer bg-white"
                     onClick={() => handlePostClick(post.postId)}
                 >
                     <CardHeader className="pb-3">

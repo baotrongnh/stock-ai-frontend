@@ -1,6 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CalendarDays, ChevronLeft, ChevronRight, AlertTriangle } from "lucide-react"
-import { useRef } from "react"
+import { useRef, useEffect } from "react"
 
 interface Stock {
     stockId: number
@@ -65,6 +65,25 @@ export function FilterPanel({
 }: FilterPanelProps) {
     const datePickerRef = useRef<HTMLDivElement>(null)
 
+    // Handle clicks outside the date picker to close it
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node) && showDatePicker) {
+                setShowDatePicker(false)
+            }
+        }
+
+        // Add event listener when the date picker is shown
+        if (showDatePicker) {
+            document.addEventListener('mousedown', handleClickOutside)
+        }
+
+        // Clean up event listener
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [showDatePicker, setShowDatePicker])
+
     return (
         <div className="flex flex-wrap items-start gap-4 p-4 bg-white/50 rounded-lg border border-red-100">
             {/* Stock Filter */}
@@ -74,7 +93,7 @@ export function FilterPanel({
                     <SelectTrigger className="cursor-pointer">
                         <SelectValue placeholder="All stocks" />
                     </SelectTrigger>
-                    <SelectContent className="cursor-pointer">
+                    <SelectContent className="cursor-pointer !bg-white dark:!bg-gray-800 border shadow-md">
                         <SelectItem value="all">All stocks</SelectItem>
                         {availableStocks.length > 0 ? availableStocks.map((stock) => (
                             <SelectItem key={stock.stockId} value={stock.stockId.toString()}>
@@ -94,7 +113,7 @@ export function FilterPanel({
                     <SelectTrigger className="cursor-pointer">
                         <SelectValue placeholder="All sentiments" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="!bg-white dark:!bg-gray-800 border shadow-md">
                         <SelectItem value="all">All sentiments</SelectItem>
                         {availableSentiments.includes('POSITIVE') && (
                             <SelectItem value="POSITIVE">Positive</SelectItem>
@@ -119,7 +138,7 @@ export function FilterPanel({
                     <SelectTrigger className="cursor-pointer">
                         <SelectValue placeholder="All levels" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="!bg-white dark:!bg-gray-800 border shadow-md">
                         <SelectItem value="all">All levels</SelectItem>
                         {availableLevels.includes('MARKET') && (
                             <SelectItem value="MARKET">Market Level</SelectItem>
@@ -252,7 +271,7 @@ export function FilterPanel({
                     <SelectTrigger className={`cursor-pointer ${!selectedDate ? 'opacity-50 cursor-not-allowed' : ''}`}>
                         <SelectValue placeholder="All sessions" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="!bg-white dark:!bg-gray-800 border shadow-md">
                         <SelectItem value="all">All sessions</SelectItem>
                         {availableSessions.map(session => (
                             <SelectItem key={session} value={session.toString()}>
@@ -279,7 +298,7 @@ export function FilterPanel({
                     <SelectTrigger className="cursor-pointer">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="!bg-white dark:!bg-gray-800 border shadow-md">
                         <SelectItem value="newest">Newest first</SelectItem>
                         <SelectItem value="oldest">Oldest first</SelectItem>
                         <SelectItem value="most-viewed">Most viewed</SelectItem>
