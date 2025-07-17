@@ -1,12 +1,11 @@
-import { CreatePostModal } from "./components/CreatePostModal"
 import { FilterBar, FilterPanel, ActiveFilters, PostGrid, PaginationControls } from "./components"
 import { useBlogFilters } from "./hooks/useBlogFilters"
-import { PostServices } from "@/apis/posts"
+// PostServices import removed as it's no longer needed
 
 export default function BlogPage() {
      const {
           posts,
-          setPosts,
+          // setPosts removed as it's no longer needed
           stocks,
           loading,
           error,
@@ -49,7 +48,7 @@ export default function BlogPage() {
           clearFilters
      } = useBlogFilters()
 
-     const userId = localStorage.getItem('userId')
+     // userId variable removed as it's no longer needed
 
      if (error) {
           return (
@@ -71,36 +70,7 @@ export default function BlogPage() {
                               <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent">
                                    📚 Market Insights Blog
                               </h1>
-                              {userId && <CreatePostModal onPostCreated={() => {
-                                   console.log('onPostCreated callback executed in BlogList.tsx');
-                                   // Refresh posts without reloading the page
-                                   setCurrentPage(1); // Reset to first page
-
-                                   // This will trigger the useBlogFilters hook to refetch data
-                                   const fetchData = async () => {
-                                        try {
-                                             console.log('Fetching updated posts...');
-                                             const postsResponse = await PostServices.getPosts(1, 1000);
-                                             let postsData = [];
-                                             if (postsResponse.data?.data && Array.isArray(postsResponse.data.data)) {
-                                                  postsData = postsResponse.data.data;
-                                             } else if (postsResponse.data && Array.isArray(postsResponse.data)) {
-                                                  postsData = postsResponse.data;
-                                             } else if (postsResponse.result && Array.isArray(postsResponse.result)) {
-                                                  postsData = postsResponse.result;
-                                             } else if (Array.isArray(postsResponse)) {
-                                                  postsData = postsResponse;
-                                             }
-                                             // Update the posts state with the new data
-                                             console.log('Updating posts with fresh data, count:', postsData.length);
-                                             setPosts(postsData);
-                                             console.log('Posts refreshed without page reload');
-                                        } catch (err) {
-                                             console.error('Error fetching updated posts:', err);
-                                        }
-                                   };
-                                   fetchData();
-                              }} />}
+                              {/* CreatePostModal button is hidden */}
                          </div>
 
                          {/* Filter Controls */}
