@@ -1,5 +1,30 @@
 import type { ReactNode } from 'react';
 
+export interface UserProfile {
+    userId: string
+    firstName: string
+    lastName: string
+    email: string
+    fullName: string
+    avatar: string
+    avatarFile?: File | null
+    provider: string
+    socialId: string
+    status: number
+    isExpert: boolean
+    createdAt: string
+    updatedAt: string
+    joinDate: string
+    refreshToken: string
+}
+
+export interface UserBackendFields {
+    provider: string
+    socialId: string
+    status: string
+    passwordHash: string
+}
+
 export interface TabItem {
     id: string;
     label: string;
