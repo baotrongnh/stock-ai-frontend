@@ -1,6 +1,8 @@
+import { Button } from "@/components/ui/button"
 import {
      Sidebar,
      SidebarContent,
+     SidebarFooter,
      SidebarGroup,
      SidebarGroupContent,
      SidebarGroupLabel,
@@ -9,11 +11,8 @@ import {
      SidebarMenuButton,
      SidebarMenuItem,
      SidebarRail,
-     SidebarFooter,
 } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { BarChart3, FileText, AlertTriangle, Shield, LogOut, User, Users } from "lucide-react"
-import { Mic, Newspaper } from "lucide-react" // Import icons for News and Podcast
+import { AlertTriangle, BarChart3, FileText, LogOut, Mic, Shield, User, Users } from "lucide-react"
 import { useNavigate } from "react-router"
 
 const navigationItems = [
