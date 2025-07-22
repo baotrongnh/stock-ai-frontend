@@ -1,4 +1,4 @@
-import { deletePost, getDetailPost, getReportedPosts } from "@/apis/admin"
+import { deletePost, getDetailPost, getReportedPosts, rejectedPosts, restorePost } from "@/apis/admin"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { AlertTriangle, CheckCircle, Clock, Eye, Loader2, MoreHorizontal, Search, ShieldAlert, Trash2, XCircle } from "lucide-react"
+import { AlertTriangle, CheckCircle, Clock, Eye, Loader2, MoreHorizontal, RotateCcw, Search, ShieldAlert, Trash2, XCircle } from "lucide-react"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
@@ -20,15 +20,25 @@ interface ReportedPost {
      title: string;
      content?: string;
      createdAt: string;
+     updatedAt?: string;
      level?: string;
      sentiment?: string;
      status: string;
      topic?: string;
-     updatedAt?: string;
      authorId?: number;
      authorName?: string;
      reportCount?: number;
      reportReason?: string;
+     expertId?: number | null;
+     stockId?: number;
+     sourceUrl?: string | null;
+     viewCount?: number;
+     session?: number;
+     likeCount?: number;
+     upvoteCount?: number;
+     downvoteCount?: number;
+     favoriteCount?: number;
+     expert?: any | null;
 }
 
 export function ComplaintsManagement() {
@@ -39,6 +49,8 @@ export function ComplaintsManagement() {
      const [statusFilter, setStatusFilter] = useState("all")
      const [blockingPostId] = useState<number | null>(null)
      const [deletingPostId, setDeletingPostId] = useState<number | null>(null)
+     const [rejectingPostId, setRejectingPostId] = useState<number | null>(null)
+     const [restoringPostId, setRestoringPostId] = useState<number | null>(null)
      const [loadingDetail, setLoadingDetail] = useState(false)
      const [detailPost, setDetailPost] = useState<ReportedPost | null>(null)
      const [openDetail, setOpenDetail] = useState(false)
@@ -50,19 +62,14 @@ export function ComplaintsManagement() {
      const fetchReportedPosts = async () => {
           setLoading(true);
           try {
-               // Add a timestamp parameter to avoid caching
-               const timestamp = new Date().getTime();
                const response = await getReportedPosts();
-               console.log(`Reported posts API response (${timestamp}):`, response.data);
+               console.log(response.data.data.data);
+               setReportedPosts(response.data.data.data);
 
-               if (response.data && response.data.data && response.data.data.posts) {
-                    setReportedPosts(response.data.data.posts);
-               } else {
-                    console.error("API response is not in the expected format:", response.data);
-               }
           } catch (error) {
                console.error("Failed to fetch reported posts:", error);
                toast.error("Failed to load reported posts");
+               setReportedPosts([]);
           } finally {
                setLoading(false);
           }
@@ -98,61 +105,6 @@ export function ComplaintsManagement() {
           )
      }
 
-     // Removed unused functions
-
-     const handleStatusChange = async (itemId: number | string, newStatus: string) => {
-          try {
-               // Find the post to update
-               const updatedPost = reportedPosts.find((post) => post.postId === itemId);
-               if (!updatedPost) {
-                    toast.error("Post not found");
-                    return;
-               }
-
-               console.log(`Updating reported post ${itemId} status to ${newStatus.toUpperCase()}`);
-
-               // Update local state immediately for better UX
-               setReportedPosts(
-                    reportedPosts.map((post) =>
-                         post.postId === itemId ? { ...post, status: newStatus.toUpperCase() } : post
-                    )
-               );
-
-               // In a real implementation, make API call here to update the post status
-               // await updatePostStatus(itemId, newStatus);
-
-               // Refresh the data to ensure consistency
-               await fetchReportedPosts();
-
-               toast.success(`Post status updated to ${newStatus}`);
-          } catch (error) {
-               console.error("Failed to update post status:", error);
-               toast.error("Failed to update post status. Please try again.");
-               // Revert local changes by refreshing
-               await fetchReportedPosts();
-          }
-     }
-
-     // const handleBlockPost = async (postId: number) => {
-     //      if (!postId) {
-     //           toast.error("Invalid post ID");
-     //           return;
-     //      }
-
-     //      setBlockingPostId(postId);
-     //      try {
-     //           await blockPost(postId);
-     //           // Automatically refresh the reported posts list after blocking
-     //           await fetchReportedPosts();
-     //           toast.success("Post deleted successfully!");
-     //      } catch (error) {
-     //           console.error("Failed to delete post:", error);
-     //           toast.error("Failed to delete post. Please try again.");
-     //      } finally {
-     //           setBlockingPostId(null);
-     //      }
-     // }
-
      const handleDeletePost = async (postId: number) => {
           if (!postId) {
                toast.error("Invalid post ID");
@@ -170,6 +122,46 @@ export function ComplaintsManagement() {
                toast.error("Failed to delete post. Please try again.");
           } finally {
                setDeletingPostId(null);
+          }
+     }
+
+     const handleRejectPost = async (postId: number) => {
+          if (!postId) {
+               toast.error("Invalid post ID");
+               return;
+          }
+
+          setRejectingPostId(postId);
+          try {
+               await rejectedPosts(postId);
+               // Automatically refresh the reported posts list after rejection
+               await fetchReportedPosts();
+               toast.success("Post rejected successfully!");
+          } catch (error) {
+               console.error("Failed to reject post:", error);
+               toast.error("Failed to reject post. Please try again.");
+          } finally {
+               setRejectingPostId(null);
+          }
+     }
+
+     const handleRestorePost = async (postId: number) => {
+          if (!postId) {
+               toast.error("Invalid post ID");
+               return;
+          }
+
+          setRestoringPostId(postId);
+          try {
+               await restorePost(postId);
+               // Automatically refresh the reported posts list after restoration
+               await fetchReportedPosts();
+               toast.success("Post restored successfully!");
+          } catch (error) {
+               console.error("Failed to restore post:", error);
+               toast.error("Failed to restore post. Please try again.");
+          } finally {
+               setRestoringPostId(null);
           }
      }
 
@@ -333,6 +325,7 @@ export function ComplaintsManagement() {
                                                        <TableHead className="text-red-900">Post Title</TableHead>
                                                        <TableHead className="text-red-900">Content</TableHead>
                                                        <TableHead className="text-red-900">Topic</TableHead>
+                                                       <TableHead className="text-red-900">Report Count</TableHead>
                                                        <TableHead className="text-red-900">Status</TableHead>
                                                        <TableHead className="text-red-900">Created At</TableHead>
                                                        <TableHead className="text-red-900">Actions</TableHead>
@@ -352,12 +345,12 @@ export function ComplaintsManagement() {
                                                        .map((post) => (
                                                             <TableRow
                                                                  key={post.postId}
-                                                                 className={`hover:bg-red-50 cursor-pointer transition-colors ${blockingPostId === post.postId || deletingPostId === post.postId
-                                                                           ? 'opacity-50 cursor-not-allowed'
-                                                                           : ''
+                                                                 className={`hover:bg-red-50 cursor-pointer transition-colors ${blockingPostId === post.postId || deletingPostId === post.postId || rejectingPostId === post.postId || restoringPostId === post.postId
+                                                                      ? 'opacity-50 cursor-not-allowed'
+                                                                      : ''
                                                                       }`}
                                                                  onClick={() => {
-                                                                      if (blockingPostId !== post.postId && deletingPostId !== post.postId) {
+                                                                      if (blockingPostId !== post.postId && deletingPostId !== post.postId && rejectingPostId !== post.postId && restoringPostId !== post.postId) {
                                                                            handleViewDetail(post.postId);
                                                                       }
                                                                  }}
@@ -372,6 +365,11 @@ export function ComplaintsManagement() {
                                                                  <TableCell className="text-red-800">
                                                                       {post.topic || 'N/A'}
                                                                  </TableCell>
+                                                                 <TableCell className="text-red-800">
+                                                                      <Badge className="bg-orange-100 text-orange-800 border-orange-300">
+                                                                           {post.reportCount || 0} reports
+                                                                      </Badge>
+                                                                 </TableCell>
                                                                  <TableCell>{getStatusBadge(post.status)}</TableCell>
                                                                  <TableCell className="text-red-800">
                                                                       {new Date(post.createdAt).toLocaleDateString()}
@@ -382,9 +380,9 @@ export function ComplaintsManagement() {
                                                                                 <Button
                                                                                      variant="outline"
                                                                                      className="h-8 w-8 p-0 border-2 bg-white hover:bg-red-100 rounded-md shadow-sm"
-                                                                                     disabled={blockingPostId === post.postId}
+                                                                                     disabled={blockingPostId === post.postId || deletingPostId === post.postId || rejectingPostId === post.postId || restoringPostId === post.postId}
                                                                                 >
-                                                                                     {blockingPostId === post.postId ? (
+                                                                                     {blockingPostId === post.postId || deletingPostId === post.postId || rejectingPostId === post.postId || restoringPostId === post.postId ? (
                                                                                           <Loader2 className="h-4 w-4 animate-spin text-red-600" />
                                                                                      ) : (
                                                                                           <MoreHorizontal className="h-4 w-4 text-red-600" />
@@ -412,29 +410,46 @@ export function ComplaintsManagement() {
                                                                                      View Post
                                                                                 </DropdownMenuItem> */}
 
-                                                                                <DropdownMenuItem
-                                                                                     onClick={() => {
-                                                                                          handleStatusChange(post.postId, 'REJECTED');
-                                                                                          toast.success("Post report rejected");
-                                                                                     }}
-                                                                                     className="cursor-pointer bg-white hover:bg-gray-100 text-gray-700 focus:text-gray-800 focus:bg-gray-100 py-2 px-2 rounded-md m-1"
-                                                                                >
-                                                                                     <XCircle className="mr-2 h-4 w-4" />
-                                                                                     Reject Report
-                                                                                </DropdownMenuItem>
+                                                                                {post.status !== 'BLOCKED' && (
+                                                                                     <DropdownMenuItem
+                                                                                          onClick={() => handleRejectPost(post.postId)}
+                                                                                          className="cursor-pointer bg-white hover:bg-gray-100 text-gray-700 focus:text-gray-800 focus:bg-gray-100 py-2 px-2 rounded-md m-1"
+                                                                                          disabled={rejectingPostId === post.postId}
+                                                                                     >
+                                                                                          <XCircle className="mr-2 h-4 w-4" />
+                                                                                          {rejectingPostId === post.postId ? 'Rejecting...' : 'Reject Report'}
+                                                                                     </DropdownMenuItem>
+                                                                                )}
 
-                                                                                <DropdownMenuItem
-                                                                                     onClick={() => handleDeletePost(post.postId)}
-                                                                                     className="cursor-pointer bg-red-50 hover:bg-red-200 text-red-700 focus:text-red-800 focus:bg-red-200 font-medium py-2 px-2 rounded-md m-1"
-                                                                                     disabled={deletingPostId === post.postId}
-                                                                                >
-                                                                                     {deletingPostId === post.postId ? (
-                                                                                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                                                     ) : (
-                                                                                          <Trash2 className="mr-2 h-4 w-4" />
-                                                                                     )}
-                                                                                     Delete Post Permanently
-                                                                                </DropdownMenuItem>
+                                                                                {post.status === 'BLOCKED' && (
+                                                                                     <DropdownMenuItem
+                                                                                          onClick={() => handleRestorePost(post.postId)}
+                                                                                          className="cursor-pointer bg-green-50 hover:bg-green-200 text-green-700 focus:text-green-800 focus:bg-green-200 font-medium py-2 px-2 rounded-md m-1"
+                                                                                          disabled={restoringPostId === post.postId}
+                                                                                     >
+                                                                                          {restoringPostId === post.postId ? (
+                                                                                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                                                          ) : (
+                                                                                               <RotateCcw className="mr-2 h-4 w-4" />
+                                                                                          )}
+                                                                                          {restoringPostId === post.postId ? 'Restoring...' : 'Restore Post'}
+                                                                                     </DropdownMenuItem>
+                                                                                )}
+
+                                                                                {post.status !== 'BLOCKED' && (
+                                                                                     <DropdownMenuItem
+                                                                                          onClick={() => handleDeletePost(post.postId)}
+                                                                                          className="cursor-pointer bg-red-50 hover:bg-red-200 text-red-700 focus:text-red-800 focus:bg-red-200 font-medium py-2 px-2 rounded-md m-1"
+                                                                                          disabled={deletingPostId === post.postId}
+                                                                                     >
+                                                                                          {deletingPostId === post.postId ? (
+                                                                                               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                                                          ) : (
+                                                                                               <Trash2 className="mr-2 h-4 w-4" />
+                                                                                          )}
+                                                                                          Delete Post Permanently
+                                                                                     </DropdownMenuItem>
+                                                                                )}
                                                                            </DropdownMenuContent>
                                                                       </DropdownMenu>
                                                                  </TableCell>
@@ -532,6 +547,19 @@ export function ComplaintsManagement() {
                                                        <p className="text-red-800 font-medium">{detailPost.level}</p>
                                                   </div>
                                              )}
+                                             {detailPost.reportCount !== undefined && (
+                                                  <div className="space-y-2">
+                                                       <h3 className="font-semibold text-red-900 flex items-center">
+                                                            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                            </svg>
+                                                            Report Count
+                                                       </h3>
+                                                       <Badge className="bg-orange-100 text-orange-800 border-orange-300">
+                                                            {detailPost.reportCount} reports
+                                                       </Badge>
+                                                  </div>
+                                             )}
                                              {detailPost.sentiment && (
                                                   <div className="space-y-2">
                                                        <h3 className="font-semibold text-red-900 flex items-center">
@@ -543,6 +571,34 @@ export function ComplaintsManagement() {
                                                        <p className="text-red-800">{detailPost.sentiment}</p>
                                                   </div>
                                              )}
+                                        </div>
+                                   </div>
+
+                                   {/* Engagement Metrics */}
+                                   <div className="space-y-2">
+                                        <h3 className="font-semibold text-red-900 flex items-center">
+                                             <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                  <path fillRule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v2a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm14 1a1 1 0 11-2 0 1 1 0 012 0zm0 4a1 1 0 11-2 0 1 1 0 012 0zm-5-4a1 1 0 11-2 0 1 1 0 012 0zm0 4a1 1 0 11-2 0 1 1 0 012 0zm-5-4a1 1 0 11-2 0 1 1 0 012 0zm0 4a1 1 0 11-2 0 1 1 0 012 0z" clipRule="evenodd" />
+                                             </svg>
+                                             Engagement Metrics
+                                        </h3>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-md border border-gray-200">
+                                             <div className="text-center">
+                                                  <div className="text-lg font-bold text-blue-600">{detailPost.viewCount || 0}</div>
+                                                  <div className="text-xs text-gray-600">Views</div>
+                                             </div>
+                                             <div className="text-center">
+                                                  <div className="text-lg font-bold text-green-600">{detailPost.likeCount || 0}</div>
+                                                  <div className="text-xs text-gray-600">Likes</div>
+                                             </div>
+                                             <div className="text-center">
+                                                  <div className="text-lg font-bold text-purple-600">{detailPost.upvoteCount || 0}</div>
+                                                  <div className="text-xs text-gray-600">Upvotes</div>
+                                             </div>
+                                             <div className="text-center">
+                                                  <div className="text-lg font-bold text-red-600">{detailPost.downvoteCount || 0}</div>
+                                                  <div className="text-xs text-gray-600">Downvotes</div>
+                                             </div>
                                         </div>
                                    </div>
 

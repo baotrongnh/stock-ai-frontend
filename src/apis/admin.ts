@@ -104,6 +104,15 @@ const getReportedPosts = async () => {
      }
 }
 
+const rejectedPosts = async (id: string | number) => {
+     try {
+          return await axiosClient.post(`admin/posts/${id}/reject-reports`)
+     } catch (error) {
+          console.error("Error rejecting post:", error);
+          throw error;
+     }
+}
+
 const blockPost = async (id: string | number) => {
      try {
           return await axiosClient.patch(`admin/posts/${id}/block`)
@@ -113,4 +122,4 @@ const blockPost = async (id: string | number) => {
      }
 }
 
-export { getAllUsers, deleteUser, loginAdmin, getAllPosts, deletePost, getDetailPost, restorePost, restoreUser, getListDeletedUsers, getUserStatistics, getReportedPosts, blockPost }
+export { getAllUsers, deleteUser, loginAdmin, getAllPosts, deletePost, getDetailPost, restorePost, restoreUser, getListDeletedUsers, getUserStatistics, getReportedPosts, blockPost, rejectedPosts }

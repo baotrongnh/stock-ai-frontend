@@ -12,7 +12,7 @@ import {
      SidebarMenuItem,
      SidebarRail,
 } from "@/components/ui/sidebar"
-import { AlertTriangle, BarChart3, FileText, LogOut, Mic, Shield, User, Users } from "lucide-react"
+import { AlertTriangle, BarChart3, FileText, LogOut, Shield, User, Users } from "lucide-react"
 import { useNavigate } from "react-router"
 
 const navigationItems = [
@@ -49,11 +49,11 @@ const navigationItems = [
                     icon: AlertTriangle,
                     key: "complaints",
                },
-               {
-                    title: "Podcast Management", // Added Podcast Management
-                    icon: Mic,
-                    key: "podcasts",
-               },
+               // {
+               //      title: "Podcast Management",
+               //      icon: Mic,
+               //      key: "podcasts",
+               // },
           ],
      },
 ]
