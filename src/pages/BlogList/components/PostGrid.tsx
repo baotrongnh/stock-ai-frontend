@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { TrendingUp, TrendingDown, Minus, Clock, Eye, ArrowUp } from "lucide-react"
 import { useNavigate } from "react-router"
 import { highlightText, highlightTextSubtle } from "../utils/highlightText"
+import stockImage from "@/assets/stock.jpg"
 
 interface Post {
     postId: number
@@ -132,18 +133,16 @@ export function PostGrid({ posts, searchTerm = "" }: PostGridProps) {
                     </CardHeader>
 
                     <CardContent className="space-y-4">
-                        {(post.thumbnail || post.sourceUrl) && (
-                            <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                                <img
-                                    src={post.thumbnail || post.sourceUrl || "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"}
-                                    alt={post.title}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        e.currentTarget.src = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
-                                    }}
-                                />
-                            </div>
-                        )}
+                        <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                            <img
+                                src={post.thumbnail || post.sourceUrl || stockImage}
+                                alt={post.title}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                    e.currentTarget.src = stockImage
+                                }}
+                            />
+                        </div>
 
                         <p className="text-sm text-gray-600 line-clamp-3">
                             {highlightTextSubtle(truncateContent(post.content), searchTerm)}

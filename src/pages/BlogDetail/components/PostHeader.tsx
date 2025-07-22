@@ -6,6 +6,7 @@ import {
     User
 } from "lucide-react";
 import type { Post } from "../types";
+import stockImage from "@/assets/stock.jpg";
 
 interface PostHeaderProps {
     post: Post;
@@ -13,8 +14,6 @@ interface PostHeaderProps {
 }
 
 export function PostHeader({ post, openImage }: PostHeaderProps) {
-    const DEFAULT_IMAGE = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3";
-
     return (
         <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
@@ -75,10 +74,13 @@ export function PostHeader({ post, openImage }: PostHeaderProps) {
             </div>
 
             <img
-                src={post.sourceUrl || DEFAULT_IMAGE}
+                src={post.sourceUrl || stockImage}
                 alt={post.title}
                 onClick={openImage}
                 className="w-full h-64 object-cover rounded-lg mb-8 cursor-pointer transition-transform hover:scale-105"
+                onError={(e) => {
+                    e.currentTarget.src = stockImage
+                }}
             />
         </div>
     );
