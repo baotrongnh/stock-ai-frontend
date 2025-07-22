@@ -97,9 +97,7 @@ const getDetailPost = async (id: string | number) => {
 
 const getReportedPosts = async () => {
      try {
-          // Add a timestamp to prevent caching
-          const timestamp = new Date().getTime();
-          return await axiosClient.get(`admin/posts/reported?_t=${timestamp}`)
+          return await axiosClient.get(`admin/posts/reported`)
      } catch (error) {
           console.error("Error fetching reported posts:", error);
           throw error;

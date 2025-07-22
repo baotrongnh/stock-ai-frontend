@@ -536,7 +536,7 @@ export function PostsManagement() {
                                                                       </DropdownMenuTrigger>
                                                                       <DropdownMenuContent
                                                                            align="end"
-                                                                           className="bg-white border border-red-200 shadow-lg"
+                                                                           className="border border-red-200 shadow-lg bg-white dark:bg-white"
                                                                            style={{ color: "#222" }}
                                                                       >
                                                                            <DropdownMenuItem
@@ -704,7 +704,7 @@ export function PostsManagement() {
 
                {/* Blocked/Deleted Posts Modal */}
                <Dialog open={openBlocked} onOpenChange={setOpenBlocked}>
-                    <DialogContent className="border-red-200 max-w-5xl bg-white text-gray-900 p-0">
+                    <DialogContent className="border-red-200 max-w-6xl bg-white text-gray-900 p-0 bg-white">
                          <DialogHeader className="sticky top-0 z-10 bg-white p-6 border-b border-red-100">
                               <div className="flex justify-between items-center">
                                    <DialogTitle className="text-xl font-bold text-red-900 flex items-center">
@@ -713,7 +713,7 @@ export function PostsManagement() {
                                         </svg>
                                         Blocked/Deleted Posts
                                    </DialogTitle>
-                                   <Badge className="ml-2 px-3 py-1 text-sm bg-red-100 text-red-800">
+                                   <Badge className="ml-2 px-3 py-1 text-sm bg-red-100 text-red-800 bg-white">
                                         {filteredBlockedPosts.length} / {blockedPosts.length} posts
                                    </Badge>
                               </div>
@@ -722,8 +722,8 @@ export function PostsManagement() {
                               </DialogDescription>
                          </DialogHeader>
 
-                         <div className="p-6 pt-0 border-b border-red-100">
-                              <div className="flex flex-col md:flex-row gap-4 mt-6">
+                         <div className="p-6 pt-0 border-b border-red-100 bg-white">
+                              <div className="flex flex-col md:flex-row gap-4 mt-6 bg-white">
                                    {/* Search bar */}
                                    <div className="relative flex-1">
                                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 h-4 w-4" />
@@ -796,9 +796,9 @@ export function PostsManagement() {
                               </div>
                          </div>
 
-                         <div className="max-h-[50vh] overflow-y-auto p-6">
+                         <div className="max-h-[70vh] overflow-y-auto p-6 bg-white">
                               {loading ? (
-                                   <div className="flex items-center justify-center py-10">
+                                   <div className="flex items-center justify-center py-10 bg-white">
                                         <Loader2 className="animate-spin h-8 w-8 text-red-600" />
                                    </div>
                               ) : (

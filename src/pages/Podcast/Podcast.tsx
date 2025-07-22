@@ -36,6 +36,10 @@ export default function Podcast() {
      const [totalPages, setTotalPages] = useState(1)
      const [currentlyPlaying, setCurrentlyPlaying] = useState<number | null>(null)
      const [isPlaying, setIsPlaying] = useState(false)
+     const [currentTime, setCurrentTime] = useState(0)
+     const [duration, setDuration] = useState(0)
+     const [volume, setVolume] = useState(1)
+     const [playbackRate, setPlaybackRate] = useState(1)
      const audioRef = useRef<HTMLAudioElement>(null)
 
      // Helper function to normalize tags (handle both string and array cases)
@@ -113,6 +117,8 @@ export default function Podcast() {
 
                if (audioRef.current) {
                     audioRef.current.src = podcast.audioUrl
+                    audioRef.current.volume = volume
+                    audioRef.current.playbackRate = playbackRate
                     audioRef.current.play()
                }
 
@@ -147,6 +153,27 @@ export default function Podcast() {
           console.error('Error playing audio')
      }
 
+     const handleVolumeChange = (newVolume: number) => {
+          setVolume(newVolume)
+          if (audioRef.current) {
+               audioRef.current.volume = newVolume
+          }
+     }
+
+     const handlePlaybackRateChange = (newRate: number) => {
+          setPlaybackRate(newRate)
+          if (audioRef.current) {
+               audioRef.current.playbackRate = newRate
+          }
+     }
+
+     const handleTimeUpdate = (newTime: number) => {
+          setCurrentTime(newTime)
+          if (audioRef.current) {
+               audioRef.current.currentTime = newTime
+          }
+     }
+
      // Filter podcasts based on search and filters
      const filteredPodcasts = podcasts.filter(podcast => {
           const matchesSearch = podcast.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -175,6 +202,8 @@ export default function Podcast() {
                     ref={audioRef}
                     onEnded={handleAudioEnded}
                     onError={handleAudioError}
+                    onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
+                    onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
                     preload="metadata"
                />
 
@@ -311,8 +340,8 @@ export default function Podcast() {
                                    {filteredPodcasts.map((podcast) => (
                                         <Card key={podcast.podcastId} className="group hover:shadow-lg transition-shadow cursor-pointer overflow-hidden">
                                              <div className="relative">
-                                                  <div className="aspect-video bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">
-                                                       <div className="text-white text-center">
+                                                  <div className="aspect-video bg-gray-200 flex items-center justify-center">
+                                                       <div className="text-gray-600 text-center">
                                                             <Volume2 className="h-10 w-10 mx-auto mb-1 opacity-80" />
                                                             <span className="text-xs opacity-80">PODCAST</span>
                                                        </div>
@@ -328,14 +357,14 @@ export default function Podcast() {
                                                        variant="ghost"
                                                   >
                                                        {currentlyPlaying === podcast.podcastId && isPlaying ? (
-                                                            <Pause className="h-10 w-10 text-white" />
+                                                            <Pause className="h-12 w-12 text-white" />
                                                        ) : (
-                                                            <Play className="h-10 w-10 text-white" />
+                                                            <Play className="h-12 w-12 text-white" />
                                                        )}
                                                   </Button>
                                                   {podcast.isFeatured && (
                                                        <div className="absolute top-2 left-2">
-                                                            <Badge className="bg-yellow-500 text-white text-xs">
+                                                            <Badge className="bg-blue-500 text-white text-xs">
                                                                  NỔI BẬT
                                                             </Badge>
                                                        </div>
@@ -426,26 +455,118 @@ export default function Podcast() {
 
                     {/* Currently Playing Indicator */}
                     {currentlyPlaying && (
-                         <div className="fixed bottom-4 right-4 bg-white border rounded-lg shadow-lg p-4 max-w-sm">
-                              <div className="flex items-center gap-3">
-                                   <div className="flex-shrink-0">
-                                        {isPlaying ? (
-                                             <div className="flex items-center gap-1">
-                                                  <div className="w-1 h-4 bg-blue-600 animate-pulse"></div>
-                                                  <div className="w-1 h-3 bg-blue-600 animate-pulse" style={{ animationDelay: '0.1s' }}></div>
-                                                  <div className="w-1 h-5 bg-blue-600 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                                             </div>
-                                        ) : (
-                                             <Pause className="h-5 w-5 text-gray-600" />
-                                        )}
+                         <div className="fixed bottom-4 right-4 bg-white border rounded-lg shadow-lg p-4 max-w-md w-full md:w-96">
+                              <div className="flex items-center justify-between gap-3 mb-3">
+                                   <div className="flex items-center gap-3 flex-1 min-w-0">
+                                        <div className="flex-shrink-0">
+                                             {isPlaying ? (
+                                                  <div className="flex items-center gap-1">
+                                                       <div className="w-1 h-4 bg-blue-600 animate-pulse"></div>
+                                                       <div className="w-1 h-3 bg-blue-600 animate-pulse" style={{ animationDelay: '0.1s' }}></div>
+                                                       <div className="w-1 h-5 bg-blue-600 animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                                                  </div>
+                                             ) : (
+                                                  <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center">
+                                                       <Play className="h-3 w-3 text-gray-600" />
+                                                  </div>
+                                             )}
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                             <p className="text-sm font-medium text-gray-900 truncate">
+                                                  {podcasts.find(p => p.podcastId === currentlyPlaying)?.title || 'Đang phát podcast...'}
+                                             </p>
+                                             <p className="text-xs text-gray-500">
+                                                  {isPlaying ? 'Đang phát' : 'Đã dừng'}
+                                             </p>
+                                        </div>
                                    </div>
-                                   <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium text-gray-900 truncate">
-                                             {podcasts.find(p => p.podcastId === currentlyPlaying)?.title || 'Đang phát podcast...'}
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                             {isPlaying ? 'Đang phát' : 'Đã dừng'}
-                                        </p>
+                                   <div>
+                                        <Button
+                                             size="sm"
+                                             variant="ghost"
+                                             className="h-8 w-8 p-0 rounded-full hover:bg-gray-100"
+                                             onClick={() => {
+                                                  if (isPlaying) {
+                                                       audioRef.current?.pause();
+                                                       setIsPlaying(false);
+                                                  } else {
+                                                       audioRef.current?.play();
+                                                       setIsPlaying(true);
+                                                  }
+                                             }}
+                                        >
+                                             {isPlaying ? (
+                                                  <Pause className="h-4 w-4 text-gray-700" />
+                                             ) : (
+                                                  <Play className="h-4 w-4 text-gray-700" />
+                                             )}
+                                        </Button>
+                                   </div>
+                              </div>
+
+                              {/* Progress bar */}
+                              <div className="mb-3">
+                                   <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                        <span>{formatDuration(currentTime)}</span>
+                                        <span>{formatDuration(duration)}</span>
+                                   </div>
+                                   <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div
+                                             className="absolute top-0 left-0 h-full bg-blue-600 rounded-full"
+                                             style={{ width: `${(currentTime / duration) * 100 || 0}%` }}
+                                        ></div>
+                                        <input
+                                             type="range"
+                                             min="0"
+                                             max={duration || 100}
+                                             value={currentTime}
+                                             onChange={(e) => handleTimeUpdate(parseFloat(e.target.value))}
+                                             className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                                        />
+                                   </div>
+                              </div>
+
+                              {/* Playback controls */}
+                              <div className="grid grid-cols-2 gap-3">
+                                   <div>
+                                        <p className="text-xs text-gray-500 mb-1">Âm lượng</p>
+                                        <div className="flex items-center gap-2">
+                                             <Volume2 className="h-4 w-4 text-gray-500" />
+                                             <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                                  <div
+                                                       className="absolute top-0 left-0 h-full bg-blue-600 rounded-full"
+                                                       style={{ width: `${volume * 100}%` }}
+                                                  ></div>
+                                                  <input
+                                                       type="range"
+                                                       min="0"
+                                                       max="1"
+                                                       step="0.1"
+                                                       value={volume}
+                                                       onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                                                       className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
+                                                  />
+                                             </div>
+                                        </div>
+                                   </div>
+                                   <div>
+                                        <p className="text-xs text-gray-500 mb-1">Tốc độ phát</p>
+                                        <Select
+                                             value={playbackRate.toString()}
+                                             onValueChange={(value) => handlePlaybackRateChange(parseFloat(value))}
+                                        >
+                                             <SelectTrigger className="h-8 text-xs border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors">
+                                                  <SelectValue placeholder="Speed" />
+                                             </SelectTrigger>
+                                             <SelectContent>
+                                                  <SelectItem value="0.5">0.5x</SelectItem>
+                                                  <SelectItem value="0.75">0.75x</SelectItem>
+                                                  <SelectItem value="1">1x</SelectItem>
+                                                  <SelectItem value="1.25">1.25x</SelectItem>
+                                                  <SelectItem value="1.5">1.5x</SelectItem>
+                                                  <SelectItem value="2">2x</SelectItem>
+                                             </SelectContent>
+                                        </Select>
                                    </div>
                               </div>
                          </div>

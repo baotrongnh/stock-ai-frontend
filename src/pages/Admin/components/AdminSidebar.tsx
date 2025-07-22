@@ -51,11 +51,6 @@ const navigationItems = [
                     key: "complaints",
                },
                {
-                    title: "News Management", // Added News Management
-                    icon: Newspaper,
-                    key: "news",
-               },
-               {
                     title: "Podcast Management", // Added Podcast Management
                     icon: Mic,
                     key: "podcasts",
