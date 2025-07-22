@@ -154,38 +154,31 @@ export function CreatePostModal({ onPostCreated }: CreatePostModalProps) {
             // Handle the response
             console.log('Post creation response received:', response)
 
-            if (response && response.saved) {
+            if (response && response.error === false) {
                 console.log('Post created successfully, closing dialog')
 
-                // Use setTimeout to ensure UI updates before callback
-                setTimeout(() => {
-                    // Close dialog first
-                    console.log('Closing dialog with setIsOpen(false)')
-                    setIsOpen(false)
+                // Call the callback immediately to ensure data refresh
+                if (onPostCreated) {
+                    console.log('Calling onPostCreated callback to refresh posts')
+                    onPostCreated()
+                }
 
-                    console.log('Resetting form')
-                    // Reset the form
-                    resetForm()
+                // Close dialog and reset form
+                console.log('Closing dialog with setIsOpen(false)')
+                setIsOpen(false)
 
-                    console.log('Showing success message')
-                    // Show success message
-                    toast.success('Post created successfully!')
+                console.log('Resetting form')
+                // Reset the form
+                resetForm()
 
-                    // Add a slight delay before calling the callback
-                    setTimeout(() => {
-                        // Call the callback if provided
-                        if (onPostCreated) {
-                            console.log('Calling onPostCreated callback')
-                            onPostCreated()
-                            console.log('Callback completed')
-                        }
+                console.log('Showing success message')
+                // Show success message
+                toast.success(response.message || 'Post created successfully!')
 
-                        console.log('Post creation process completed successfully')
-                    }, 100)
-                }, 0)
+                console.log('Post creation process completed successfully')
             } else {
                 console.log('Failed to create post - response:', response)
-                toast.error('Failed to create post')
+                toast.error(response.message || 'Failed to create post')
             }
         } catch (error) {
             console.error('Error during post creation:', error)

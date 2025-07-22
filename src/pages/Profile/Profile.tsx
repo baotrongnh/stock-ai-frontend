@@ -8,7 +8,8 @@ import {
      ProfileSkeleton,
      AccountDetailsSkeleton,
      ProfileHeaderSkeleton,
-     FavoritesList
+     FavoritesList,
+     UserPosts
 } from "./components"
 
 export default function Profile() {
@@ -33,6 +34,8 @@ export default function Profile() {
                          return <ProfileSkeleton />
                     case "account":
                          return <AccountDetailsSkeleton />
+                    case "posts":
+                         return <ProfileSkeleton />
                     case "favorites":
                          return <ProfileSkeleton />
                     default:
@@ -52,6 +55,8 @@ export default function Profile() {
                     )
                case "account":
                     return <AccountDetailsTab profile={profile} />
+               case "posts":
+                    return <UserPosts />
                case "favorites":
                     return <FavoritesList />
                default:

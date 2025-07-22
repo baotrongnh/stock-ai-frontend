@@ -28,53 +28,49 @@ import {
 import { Button } from "@/components/ui/button";
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
-import { PostServices } from "@/apis/posts";
+import { CommentService } from "@/apis/comments";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router";
+import type { Comment } from "../types";
 
-interface Post {
-    postId: number;
-    title: string;
-    content: string;
-    stockId?: number;
-    userId?: number;
-    createdBy?: number;
-    // Add other fields as needed for your use case
+interface CommentActionsProps {
+    comment: Comment;
+    refetchComments: () => Promise<void>;
 }
 
-export function PostActions({
-    post,
-    refetchPost,
-}: {
-    post: Post;
-    refetchPost: () => Promise<void>;
-}) {
+export function CommentActions({ comment, refetchComments }: CommentActionsProps) {
     const [isEditOpen, setIsEditOpen] = useState(false);
-    const [title, setTitle] = useState(post.title);
-    const [content, setContent] = useState(post.content);
-    const [file, setFile] = useState<File | undefined>();
-    const navigate = useNavigate()
+    const [content, setContent] = useState(comment.content);
+
+    // Current user ID to check if user can edit/delete this comment
+    const currentUserId = localStorage.getItem('userId');
+    const canManageComment = currentUserId === comment.userId?.toString();
+
+    // Don't render anything if the user can't manage this comment
+    if (!canManageComment) {
+        return null;
+    }
 
     const handleUpdate = async () => {
         try {
-            const res = await PostServices.updatePostById(post.postId, title, content, post.stockId ?? 0, file);
-            console.log(res)
-            toast.success("Post updated successfully");
+            await CommentService.updateCommentById(comment.commentId, {
+                content: content,
+                isEdited: true
+            });
+            toast.success("Comment updated successfully");
             setIsEditOpen(false);
-            await refetchPost();
+            await refetchComments();
         } catch (err) {
-            toast.error(`Failed to update post: ${err}`);
+            toast.error(`Failed to update comment: ${err}`);
         }
     };
 
     const handleDelete = async () => {
         try {
-            const res = await PostServices.deletePostById(post.postId);
-            console.log(res)
-            toast.success("Post deleted");
-            navigate(`/blog`)
+            await CommentService.deleteCommentById(comment.commentId);
+            toast.success("Comment deleted");
+            await refetchComments();
         } catch (err) {
-            toast.error(`Failed to delete post: ${err}`);
+            toast.error(`Failed to delete comment: ${err}`);
         }
     };
 
@@ -85,9 +81,9 @@ export function PostActions({
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
-                                variant="default"
+                                variant="ghost"
                                 size="sm"
-                                className="flex items-center gap-2 text-black shadow-none cursor-pointer font-medium outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                                className="flex items-center gap-2 text-gray-500 hover:text-gray-700 shadow-none cursor-pointer font-medium outline-none focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-8 w-8 p-0"
                             >
                                 <MoreVertical className="w-4 h-4" />
                             </Button>
@@ -96,62 +92,35 @@ export function PostActions({
                         <DropdownMenuContent align="end" className="w-36 shadow-lg">
                             <DialogTrigger asChild>
                                 <DropdownMenuItem className="cursor-pointer text-blue-600 hover:text-white hover:bg-blue-600 font-medium">
-                                    Edit Post
+                                    Edit Comment
                                 </DropdownMenuItem>
                             </DialogTrigger>
 
                             <AlertDialogTrigger asChild>
                                 <DropdownMenuItem className="cursor-pointer text-red-600 hover:text-white hover:bg-red-600 font-medium">
-                                    Delete Post
+                                    Delete Comment
                                 </DropdownMenuItem>
                             </AlertDialogTrigger>
                         </DropdownMenuContent>
                     </DropdownMenu>
 
                     {/* Edit Dialog */}
-                    <DialogContent className="max-w-2xl w-full">
+                    <DialogContent className="max-w-md w-full">
                         <DialogHeader>
-                            <DialogTitle>Edit Post</DialogTitle>
+                            <DialogTitle>Edit Comment</DialogTitle>
                         </DialogHeader>
-
-                        <input
-                            type="text"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="w-full border p-2 rounded mb-3"
-                            placeholder="Post title"
-                        />
 
                         <textarea
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
-                            className="w-full border p-2 rounded mb-3 h-40"
-                            placeholder="Post content"
+                            className="w-full border p-2 rounded mb-3 h-32"
+                            placeholder="Comment content"
                         />
-
-                        <div className="mb-4">
-                            <label htmlFor="fileInput" className="block mb-2 font-medium text-gray-700">
-                                Choose image (optional)
-                            </label>
-                            <div className="flex items-center gap-2">
-                                <label
-                                    htmlFor="fileInput"
-                                    className="cursor-pointer px-4 py-2 bg-gray-100 hover:bg-gray-200 border rounded text-sm"
-                                >
-                                    {file ? file.name : "Choose File"}
-                                </label>
-                                <input
-                                    type="file"
-                                    id="fileInput"
-                                    className="hidden"
-                                    onChange={(e) => setFile(e.target.files?.[0])}
-                                />
-                            </div>
-                        </div>
 
                         <Button
                             className="bg-red-500 hover:bg-red-600 text-white w-full"
                             onClick={handleUpdate}
+                            disabled={!content.trim()}
                         >
                             Save Changes
                         </Button>
@@ -162,7 +131,7 @@ export function PostActions({
                         <AlertDialogHeader>
                             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                             <AlertDialogDescription>
-                                This action cannot be undone. This will permanently delete the post.
+                                This action cannot be undone. This will permanently delete your comment.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>

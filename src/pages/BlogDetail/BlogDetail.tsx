@@ -1,14 +1,14 @@
-import { PostServices } from "@/apis/posts";
 import { CommentService } from "@/apis/comments";
+import { PostServices } from "@/apis/posts";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import { Link, useParams, useLocation } from "react-router";
-import type { Post, Comment } from "./types";
-import { PostHeader } from "./components/PostHeader";
-import { PostFooter } from "./components/PostFooter";
+import { Link, useLocation, useParams } from "react-router";
 import { CommentsSection } from "./components/Comments";
+import { PostFooter } from "./components/PostFooter";
+import { PostHeader } from "./components/PostHeader";
+import type { Comment, Post } from "./types";
 
 const DEFAULT_IMAGE = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3";
 
@@ -27,7 +27,14 @@ export default function BlogDetail() {
     const [userVote, setUserVote] = useState<"UPVOTE" | "DOWNVOTE" | null>(null);
     const [isVoting, setIsVoting] = useState(false);
     const [isFavoriting, setIsFavoriting] = useState(false);
-    const userId = Number(localStorage.getItem('userId'));
+    // Get userId from localStorage
+    const userIdRaw = localStorage.getItem('userId');
+
+    // Create userId value that will work in all contexts
+    // If userIdRaw is not a valid number, use the string value directly
+    const userId = userIdRaw ?
+        (!isNaN(Number(userIdRaw)) ? Number(userIdRaw) : userIdRaw) :
+        undefined;
 
     const fetchPost = useCallback(async (showLoading = true) => {
         if (showLoading) {
@@ -42,6 +49,14 @@ export default function BlogDetail() {
 
                 // Update post with received data
                 setPost(postData);
+                console.log('Post data received:', {
+                    id: postData?.postId,
+                    title: postData?.title,
+                    userId: postData?.userId,
+                    createdBy: postData?.createdBy,
+                    user: postData?.user,
+                    currentUserId: userId
+                });
 
                 // Set initial states directly to avoid delay
                 if (postData) {
@@ -65,7 +80,7 @@ export default function BlogDetail() {
                 setLoading(false);
             }
         }
-    }, [id]);
+    }, [id, userId]);
 
     useEffect(() => {
         fetchPost(true);
@@ -276,14 +291,27 @@ export default function BlogDetail() {
     }, [post, fetchComments]);
 
     const handleAddComment = async () => {
-        if (!newComment.trim() || !post) return;
+        // Enhanced debugging for userId
+        // console.log("Current userId debug info:", {
+        //     value: userId,
+        //     type: typeof userId,
+        //     raw: userIdRaw,
+        //     rawType: typeof userIdRaw,
+        //     isValid: !!userId
+        // });
+
+        if (!newComment.trim() || !post || !userId) return;  // Verify userId exists
 
         setAddingComment(true);
         try {
+
             const commentData = {
                 postId: post.postId,
-                userId: userId,
-                content: newComment.trim()
+                userId: userIdRaw || "",  // Use the raw string value, API accepts string
+                content: newComment.trim(),
+                parentCommentId: 0,  // Set to 0 for top-level comments
+                isEdited: false,     // New comment is not edited
+                likeCount: 0         // Initialize like count as 0
             };
 
             const response = await CommentService.createComment(commentData);
@@ -332,7 +360,48 @@ export default function BlogDetail() {
             const normalized = post.content.replace(/\\n/g, '\n');
             setNormalizedContent(normalized);
         }
-    }, [post]);
+        console.log("Huyyy: ", post)
+        // Log post ownership details for debugging
+        if (post) {
+            // Normalize both values for comparison
+            const normalizedExpertId = post.expertId ? String(post.expertId).trim() : '';
+            const normalizedUserIdRaw = userIdRaw ? String(userIdRaw).trim() : '';
+
+            console.log('Post ownership check:', {
+                postUserId: post.userId,
+                postCreatedBy: post.createdBy,
+                postCreatedById: post.createdById,
+                postAuthorId: post.authorId,
+                postExpertId: post.expertId,
+                postExpertIdType: typeof post.expertId,
+                postUserUserId: post.user?.userId,
+                currentUserIdRaw: userIdRaw,
+                currentUserIdRawType: typeof userIdRaw,
+                currentUserId: userId,
+                normalizedExpertId,
+                normalizedUserIdRaw,
+                isMatch: normalizedExpertId === normalizedUserIdRaw
+            });
+        }
+    }, [post, userId, userIdRaw]);
+
+    useEffect(() => {
+        if (post && userIdRaw) {
+            // Normalize both values for comparison by trimming whitespace and ensuring they're strings
+            const normalizedExpertId = post.expertId ? String(post.expertId).trim() : '';
+            const normalizedUserId = userIdRaw ? String(userIdRaw).trim() : '';
+            const isExpertMatch = normalizedExpertId === normalizedUserId;
+
+            console.log('Author check (new):', {
+                expertId: post.expertId,
+                normalizedExpertId,
+                userIdRaw: userIdRaw,
+                normalizedUserId,
+                isExpertMatch: isExpertMatch,
+                stringComparison: `"${normalizedExpertId}" === "${normalizedUserId}"`
+            });
+        }
+    }, [post, userIdRaw]);
 
     const openImage = () => {
         setIsImageOpen(true);
@@ -356,17 +425,17 @@ export default function BlogDetail() {
             <div className="flex-1 flex flex-col">
                 {/* Header */}
                 <div className="bg-white border-b border-gray-200 p-6">
-                    <div className="flex items-center gap-4 mb-4">
-                        <Link to={location.state?.from || "/blog"}>
-                            <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50">
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Back
-                            </Button>
-                        </Link>
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                        <div>
+                            <Link to={location.state?.from || "/blog"}>
+                                <Button variant="ghost" size="sm" className="text-red-600 hover:bg-red-50">
+                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                    Back
+                                </Button>
+                            </Link>
+                        </div>
                     </div>
-                </div>
-
-                {/* Article Content */}
+                </div>                {/* Article Content */}
                 <div className="flex-1 overflow-y-auto">
                     <article className="max-w-4xl mx-auto p-6">
                         {/* Post Header */}
@@ -390,6 +459,7 @@ export default function BlogDetail() {
                             isFavoriting={isFavoriting}
                             commentCount={comments.length}
                             userId={userId}
+                            userIdRaw={userIdRaw}
                             handleVote={handleVote}
                             handleFavorite={handleFavorite}
                             refreshPost={refreshPost}
@@ -403,6 +473,7 @@ export default function BlogDetail() {
                             newComment={newComment}
                             setNewComment={setNewComment}
                             handleAddComment={handleAddComment}
+                            refetchComments={fetchComments}
                         />
                     </article>
                 </div>
