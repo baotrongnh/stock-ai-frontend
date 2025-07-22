@@ -314,6 +314,35 @@ export function useBlogFilters() {
     const startIndex = (currentPage - 1) * postsPerPage
     const paginatedPosts = sortedPosts.slice(startIndex, startIndex + postsPerPage)
 
+    // Add a function to refresh the posts
+    const refreshPosts = useCallback(async () => {
+        try {
+            console.log('Refreshing posts data...')
+            setLoading(true)
+            const postsResponse = await PostServices.getPosts(1, 1000)
+
+            // Handle posts response - try multiple possible structures
+            let postsData = []
+            if (postsResponse.data?.data && Array.isArray(postsResponse.data.data)) {
+                postsData = postsResponse.data.data
+            } else if (postsResponse.data && Array.isArray(postsResponse.data)) {
+                postsData = postsResponse.data
+            } else if (postsResponse.result && Array.isArray(postsResponse.result)) {
+                postsData = postsResponse.result
+            } else if (Array.isArray(postsResponse)) {
+                postsData = postsResponse
+            }
+
+            console.log(`Retrieved ${postsData.length} posts from server`)
+            setPosts(postsData)
+            setCurrentPage(1) // Reset to first page to show newest posts
+        } catch (err) {
+            console.error('Error refreshing posts:', err)
+        } finally {
+            setLoading(false)
+        }
+    }, [])
+
     // Reset pagination when filters change
     useEffect(() => {
         setCurrentPage(1)
@@ -385,6 +414,9 @@ export function useBlogFilters() {
         totalPages,
         postsPerPage,
         totalPosts: sortedPosts.length,
+
+        // Data refresh
+        refreshPosts,
 
         // Date picker
         showDatePicker,

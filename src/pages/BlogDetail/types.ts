@@ -25,6 +25,10 @@ export interface Post {
     postId: number;
     title: string;
     content: string;
+    userId?: number;
+    createdBy?: number;
+    createdById?: number;
+    authorId?: number;
     sentiment?: string;
     level?: string;
     topic?: string;
@@ -34,7 +38,7 @@ export interface Post {
     author?: string;
     createdAt: string;
     sourceUrl?: string;
-    expertId?: number;
+    expertId?: string;  // Changed from number to string based on API response
     isFavorited?: boolean;
     userVote?: "UPVOTE" | "DOWNVOTE" | null;
     userVoteType?: "UPVOTE" | "DOWNVOTE" | null;
@@ -42,6 +46,11 @@ export interface Post {
     userHasFavorited?: boolean;
     userVoteCreatedAt?: string;
     userFavoriteCreatedAt?: string;
+    user?: {
+        userId: string;
+        fullName?: string;
+        avatarUrl?: string;
+    };
     expert?: {
         fullName: string;
         avatarUrl?: string;

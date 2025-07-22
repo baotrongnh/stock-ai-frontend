@@ -1,4 +1,4 @@
-import { FilterBar, FilterPanel, ActiveFilters, PostGrid, PaginationControls } from "./components"
+import { FilterBar, FilterPanel, ActiveFilters, PostGrid, PaginationControls, CreatePostModal } from "./components"
 import { useBlogFilters } from "./hooks/useBlogFilters"
 // PostServices import removed as it's no longer needed
 
@@ -35,6 +35,7 @@ export default function BlogPage() {
           totalPages,
           postsPerPage,
           totalPosts,
+          refreshPosts,
           showDatePicker,
           setShowDatePicker,
           currentMonth,
@@ -70,7 +71,7 @@ export default function BlogPage() {
                               <h1 className="text-4xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent">
                                    📚 Market Insights Blog
                               </h1>
-                              {/* CreatePostModal button is hidden */}
+                              <CreatePostModal onPostCreated={refreshPosts} />
                          </div>
 
                          {/* Filter Controls */}
