@@ -106,7 +106,7 @@ const getReportedPosts = async () => {
 
 const rejectedPosts = async (id: string | number) => {
      try {
-          return await axiosClient.post(`admin/posts/${id}/reject-reports`)
+          return await axiosClient.patch(`admin/posts/${id}/reject-reports`)
      } catch (error) {
           console.error("Error rejecting post:", error);
           throw error;

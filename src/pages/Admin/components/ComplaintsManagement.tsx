@@ -63,7 +63,6 @@ export function ComplaintsManagement() {
           setLoading(true);
           try {
                const response = await getReportedPosts();
-               console.log(response.data.data.data);
                setReportedPosts(response.data.data.data);
 
           } catch (error) {
