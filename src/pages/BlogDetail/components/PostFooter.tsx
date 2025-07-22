@@ -3,6 +3,7 @@ import { ArrowDown, ArrowUp, Bookmark, MessageSquare } from "lucide-react";
 import type { Post } from "../types";
 import type { FC } from "react";
 import { PostActions } from "./PostActions";
+import { ReportButton } from "./ReportButton";
 
 interface PostFooterProps {
     post: Post;
@@ -38,7 +39,7 @@ export const PostFooter: FC<PostFooterProps> = ({
                             variant="outline"
                             size="sm"
                             className={`border-green-200 hover:bg-green-50 transition-all duration-200 ${userVote === "UPVOTE"
-                                ? "bg-green-100 text-green-700 border-green-300 shadow-sm animate-pulse"
+                                ? "bg-green-700 text-white border-green-300 hover:bg-green-600 shadow-sm animate-pulse"
                                 : "text-green-600"
                                 }`}
                             onClick={() => handleVote("UPVOTE")}
@@ -56,7 +57,7 @@ export const PostFooter: FC<PostFooterProps> = ({
                             variant="outline"
                             size="sm"
                             className={`border-red-200 hover:bg-red-50 transition-all duration-200 ${userVote === "DOWNVOTE"
-                                ? "bg-red-100 text-red-700 border-red-300 shadow-sm animate-pulse"
+                                ? "bg-red-700 text-white border-red-300 hover:bg-red-600 shadow-sm animate-pulse"
                                 : "text-red-600"
                                 }`}
                             onClick={() => handleVote("DOWNVOTE")}
@@ -88,10 +89,8 @@ export const PostFooter: FC<PostFooterProps> = ({
                     </Button>
                     {
                         post.expertId === userId
-                            ?
-                            <PostActions post={post} refetchPost={refreshPost} />
-                            :
-                            <></>
+                            ? <PostActions post={post} refetchPost={refreshPost} />
+                            : <ReportButton postId={post.postId} />
                     }
                 </div>
             </div>
