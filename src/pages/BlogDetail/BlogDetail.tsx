@@ -9,8 +9,7 @@ import { CommentsSection } from "./components/Comments";
 import { PostFooter } from "./components/PostFooter";
 import { PostHeader } from "./components/PostHeader";
 import type { Comment, Post } from "./types";
-
-const DEFAULT_IMAGE = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3";
+import stockImage from "@/assets/stock.jpg";
 
 export default function BlogDetail() {
     const { id } = useParams();
@@ -486,9 +485,12 @@ export default function BlogDetail() {
                     onClick={() => setIsImageOpen(false)}
                 >
                     <img
-                        src={post.sourceUrl || DEFAULT_IMAGE}
+                        src={post.sourceUrl || stockImage}
                         alt="Full Size"
                         className="max-h-[90vh] max-w-[90vw] rounded shadow-lg"
+                        onError={(e) => {
+                            e.currentTarget.src = stockImage
+                        }}
                     />
                 </div>
             )}

@@ -29,7 +29,7 @@ export function FilterBar({
                     placeholder="Search articles, stocks, or content..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 border-gray-300 focus:border-red-500 focus:ring-red-500"
+                    className="pl-10 border-gray-300 focus:border-red-500 focus:ring-red-500 bg-white"
                 />
             </div>
 
@@ -37,11 +37,11 @@ export function FilterBar({
             <Button
                 variant="outline"
                 onClick={() => setShowFilters(!showFilters)}
-                className={`cursor-pointer border-red-200 text-red-600 hover:bg-red-50 ${hasActiveFilters ? 'bg-red-50' : ''}`}
+                className={`cursor-pointer border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 ${hasActiveFilters ? 'bg-red-50 border-red-300 text-red-700' : 'bg-white'}`}
             >
                 <Filter className="w-4 h-4 mr-2" />
                 Filters
-                {hasActiveFilters && <Badge className="ml-2 bg-red-500">!</Badge>}
+                {hasActiveFilters && <Badge className="ml-2 bg-red-500 text-white">!</Badge>}
             </Button>
 
             {/* Clear Filters */}
@@ -49,7 +49,7 @@ export function FilterBar({
                 <Button
                     variant="ghost"
                     onClick={clearFilters}
-                    className="cursor-pointer text-gray-600 hover:text-red-600"
+                    className="cursor-pointer text-gray-600 hover:text-red-600 hover:bg-red-50 bg-white transition-all duration-200"
                 >
                     <X className="w-4 h-4 mr-2" />
                     Clear
