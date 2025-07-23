@@ -12,7 +12,8 @@ interface PostFooterProps {
     isVoting: boolean;
     isFavoriting: boolean;
     commentCount: number;
-    userId?: number;
+    userId?: number | string;
+    userIdRaw?: string | null;
     handleVote: (voteType: "UPVOTE" | "DOWNVOTE") => Promise<void>;
     handleFavorite: () => Promise<void>;
     refreshPost: () => Promise<void>;
@@ -26,6 +27,7 @@ export const PostFooter: FC<PostFooterProps> = ({
     isFavoriting,
     commentCount,
     userId,
+    userIdRaw,
     handleVote,
     handleFavorite,
     refreshPost
@@ -87,10 +89,11 @@ export const PostFooter: FC<PostFooterProps> = ({
                         <Bookmark className={`w-4 h-4 mr-2 ${isFavorited ? "fill-yellow-600" : ""}`} />
                         {isFavoriting ? "Saving..." : (isFavorited ? "Saved" : "Save")}
                     </Button>
-                    {
-                        post.expertId === userId
-                            ? <PostActions post={post} refetchPost={refreshPost} />
-                            : <ReportButton postId={post.postId} />
+                    {/* Show PostActions if user is author, otherwise show ReportButton */}
+                    {post.expertId && (userIdRaw || userId) &&
+                        (String(userIdRaw).trim() === String(post.expertId).trim())
+                        ? <PostActions post={post} refetchPost={refreshPost} />
+                        : <ReportButton postId={post.postId} />
                     }
                 </div>
             </div>

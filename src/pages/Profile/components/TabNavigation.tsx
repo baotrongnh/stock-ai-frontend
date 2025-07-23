@@ -1,4 +1,4 @@
-import { User, Key, BookmarkIcon } from "lucide-react"
+import { User, Key, BookmarkIcon, FileText } from "lucide-react"
 import type { TabItem } from "../types"
 
 interface TabNavigationProps {
@@ -9,6 +9,7 @@ interface TabNavigationProps {
 const tabs: TabItem[] = [
     { id: "personal", label: "Personal Info", icon: <User className="w-4 h-4" /> },
     { id: "account", label: "Account Details", icon: <Key className="w-4 h-4" /> },
+    { id: "posts", label: "Your Posts", icon: <FileText className="w-4 h-4" /> },
     { id: "favorites", label: "Favorites", icon: <BookmarkIcon className="w-4 h-4" /> },
 ]
 

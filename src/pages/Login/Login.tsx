@@ -34,9 +34,9 @@ export default function Login() {
         const userProfile = await UserServices.getUserById(res.userId)
 
         toast.success("Login successful!")
-        setTimeout(() => {
-          navigate("/blog", { state: { user: userProfile.data } })
-        }, 1000)
+
+        navigate("/blog", { state: { user: userProfile.data } })
+
       } else {
         toast.error("Invalid email or password")
         setError("Invalid email or password")
@@ -113,8 +113,8 @@ export default function Login() {
               type="submit"
               disabled={isLoading}
               className={`w-full text-white py-3 rounded-lg font-semibold transition mb-4 flex items-center justify-center ${isLoading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-[#EF4444] hover:bg-[#DC2626]'
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-[#EF4444] hover:bg-[#DC2626]'
                 }`}
             >
               {isLoading ? (

@@ -121,6 +121,21 @@ const unfavoritePost = async (id: number) => {
     }
 }
 
+const getUserPosts = async (page: number, pageSize: number) => {
+    try {
+        const response = await axiosClient.get('/posts/user', {
+            params: {
+                page,
+                pageSize
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error getting user posts:', error)
+        throw error
+    }
+};
+
 export const PostServices = {
     getPosts,
     getPostById,
@@ -130,4 +145,5 @@ export const PostServices = {
     votePost,
     favoritePost,
     unfavoritePost,
+    getUserPosts
 }

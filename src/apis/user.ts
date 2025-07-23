@@ -63,10 +63,16 @@ const deleteUser = async (id: number | string) => {
     return response.data
 }
 
+const getCurrentUser = async () => {
+    const response = await axiosClient.get('/users/me')
+    return response.data
+}
+
 export const UserServices = {
     createUser,
     getUsers,
     getUserById,
     updateUser,
     deleteUser,
+    getCurrentUser,
 }

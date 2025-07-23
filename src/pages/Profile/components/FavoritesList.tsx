@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import type { FavoritePost } from "../types";
 import { getFavorites } from '@/apis/favorites';
 import { Button } from "@/components/ui/button";
+import stockImage from '@/assets/stock.jpg';
 
 export const FavoritesList = () => {
     const [favorites, setFavorites] = useState<FavoritePost[]>([]);
@@ -21,9 +22,17 @@ export const FavoritesList = () => {
         try {
             setLoading(true);
             const response = await getFavorites(page, postsPerPage);
-            setFavorites(response.data.data.data);
-            setTotalPages(response.data.data.pagination.totalPages);
-            setTotalPosts(response.data.data.pagination.total);
+            // Filter only active posts
+            const activePosts = response.data.data.data.filter((post: FavoritePost) => post.status === 'ACTIVE');
+            setFavorites(activePosts);
+
+            // Note: Pagination might not be accurate when filtering on frontend
+            // Ideally, the backend should handle the status filtering
+            const totalActivePosts = response.data.data.pagination.total;
+            const activePagesNeeded = Math.ceil(totalActivePosts / postsPerPage);
+
+            setTotalPages(activePagesNeeded);
+            setTotalPosts(totalActivePosts);
             setLoading(false);
         } catch (err) {
             console.error('Error fetching favorites:', err);
@@ -144,18 +153,16 @@ export const FavoritesList = () => {
                         </CardHeader>
 
                         <CardContent className="space-y-4">
-                            {post.sourceUrl && (
-                                <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
-                                    <img
-                                        src={post.sourceUrl || "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"}
-                                        alt={post.title}
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                            e.currentTarget.src = "https://tse1.mm.bing.net/th/id/OIP.qISjQuz0VsrKxe81_sA7twHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3";
-                                        }}
-                                    />
-                                </div>
-                            )}
+                            <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+                                <img
+                                    src={post.sourceUrl || stockImage}
+                                    alt={post.title}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.currentTarget.src = stockImage;
+                                    }}
+                                />
+                            </div>
 
                             <p className="text-sm text-gray-600 line-clamp-3">
                                 {truncateContent(post.content)}
